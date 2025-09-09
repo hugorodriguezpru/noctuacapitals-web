@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Ahorro para el Retiro</title>
+    <title>Noctua Capital - Asesor de Retiro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -12,14 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-primary: #114a43;
-            --color-primary-dark: #0c3b36;
-            --color-accent-blue: #3b82f6;
+            --color-primary: #114a43; /* Green from user's code */
+            --color-primary-dark: #0c3b36; /* Darker green from user's code */
+            --color-success: #198754;
+            --color-danger: #d9534f;
             --color-accent-gold: #ca8a04;
+            --color-primary-light: #d1e7dd; /* Light green for backgrounds */
         }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f0f2f5;
+            padding-top: 68px; /* Offset for fixed header */
         }
         .card {
             background-color: white;
@@ -47,109 +50,184 @@
         .form-input:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(17, 74, 67, 0.2);
+            box-shadow: 0 0 0 3px rgba(17, 74, 67, 0.2); /* Adjusted to green */
         }
         .results-hidden {
             max-height: 0;
             opacity: 0;
             overflow: hidden;
-            transition: max-height 0.7s ease-out, opacity 0.5s ease-in;
+            transition: max-height 0.7s ease-out, opacity 0.5s ease-in, transform 0.7s ease-out;
+            transform: translateY(-20px);
         }
         .results-visible {
-            max-height: 8000px;
+            max-height: 8000px; /* Large enough value */
             opacity: 1;
-            transition: max-height 1.2s ease-in, opacity 0.7s ease-out;
+            transform: translateY(0);
+            transition: max-height 1.2s ease-in, opacity 0.7s ease-out, transform 0.7s ease-in;
         }
-        .currency-amount {
-            white-space: nowrap;
+        .year-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #666;
         }
+        .past { background-color: #a5d6a7; }
+        .investment { background-color: #e0e0e0; }
+        .retirement { background-color: #90caf9; }
     </style>
 </head>
 <body class="antialiased text-gray-800">
+    <!-- Header / Navigation -->
+    <header class="bg-[--color-primary-dark] shadow-md fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <!-- LOGO CORREGIDO: Simplificado para mostrar solo el texto. -->
+            <a href="#" class="flex items-center">
+                <svg viewBox="0 0 200 40" class="h-8 w-auto" xmlns="http://www.w3.org/2000/svg">
+                   <text x="0" y="30" font-family="Inter, sans-serif" font-size="28" font-weight="500" fill="white">Noctua Capital</text>
+                </svg>
+            </a>
+            <!-- Desktop Menu -->
+            <ul class="hidden md:flex items-center space-x-8 text-white">
+                <li><a href="#" class="hover:text-gray-300 transition-colors">Contacto</a></li>
+                <li><a href="#" class="hover:text-gray-300 transition-colors">CHECK-UP financiero</a></li>
+                <li><a href="#" class="font-semibold border-b-2 border-white">Calculadoras</a></li>
+            </ul>
+            <!-- Mobile Menu Button (Hamburger) -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[--color-primary-dark]">
+            <ul class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-white">
+                 <li><a href="#" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">Contacto</a></li>
+                 <li><a href="#" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">CHECK-UP financiero</a></li>
+                 <li><a href="#" class="block px-3 py-2 rounded-md bg-[--color-primary] font-semibold">Calculadoras</a></li>
+            </ul>
+        </div>
+    </header>
 
     <div class="container mx-auto p-4 sm:p-6">
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-2xl sm:text-3xl font-bold" style="color: var(--color-primary);">Calculadora de Ahorro para el Retiro</h1>
-            <p class="mt-2 text-base sm:text-lg text-gray-600">Planifica tu futuro y descubre el potencial de tu ahorro.</p>
-        </header>
+        <div class="text-center mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold" style="color: var(--color-primary);">Asesor Financiero Digital de Retiro</h1>
+            <p class="mt-2 text-base sm:text-lg text-gray-600">Define tu futuro, visualiza tu meta y descubre tu plan de acción.</p>
+        </div>
 
-        <!-- Main Content -->
         <main class="flex flex-col gap-8">
             <!-- Input Form -->
-            <div>
-                <div class="card p-6">
-                    <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-800">Ingresa tus Datos</h2>
-                    <form id="retirement-form" class="space-y-5">
+            <div class="card p-6">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-gray-800">1. Define tu Meta</h2>
+                <form id="retirement-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                        <input type="text" id="name" class="form-input" placeholder="Nombre del cliente">
+                    </div>
+                    <div>
+                        <label for="current-age" class="block text-sm font-medium text-gray-700 mb-1">Edad Actual</label>
+                        <input type="number" id="current-age" class="form-input" placeholder="Ej: 30">
+                    </div>
+                    <div>
+                        <label for="retirement-age" class="block text-sm font-medium text-gray-700 mb-1">Edad de Retiro</label>
+                        <input type="number" id="retirement-age" class="form-input" placeholder="Ej: 65">
+                    </div>
+                     <div>
+                        <label for="lifespan" class="block text-sm font-medium text-gray-700 mb-1">Esperanza de Vida</label>
+                        <input type="number" id="lifespan" class="form-input" placeholder="Ej: 90">
+                    </div>
+                    <div>
+                        <label for="monthly-retirement-income" class="block text-sm font-medium text-gray-700 mb-1">Ingreso Mensual Deseado</label>
+                        <input type="number" id="monthly-retirement-income" class="form-input" placeholder="Ej: 30000">
+                    </div>
+                    <div>
+                        <label for="monthly-salary" class="block text-sm font-medium text-gray-700 mb-1">Salario Mensual Bruto</label>
+                        <input type="number" id="monthly-salary" class="form-input" placeholder="Ej: 50000">
+                    </div>
+                    <div class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-                            <input type="text" id="name" class="form-input" placeholder="Nombre del cliente">
+                            <label for="inflation-rate" class="block text-sm font-medium text-gray-700 mb-1">Inflación Anual Proyectada (%)</label>
+                            <input type="number" id="inflation-rate" class="form-input" value="4.5" step="0.1">
                         </div>
                         <div>
-                            <label for="current-age" class="block text-sm font-medium text-gray-700 mb-1">Edad Actual</label>
-                            <input type="number" id="current-age" class="form-input" placeholder="Ej: 30">
+                            <label for="interest-rate" class="block text-sm font-medium text-gray-700 mb-1">Rendimiento Anual Proyectado (%)</label>
+                            <input type="number" id="interest-rate" class="form-input" value="8.0" step="0.1">
                         </div>
-                        <div>
-                            <label for="retirement-age" class="block text-sm font-medium text-gray-700 mb-1">Edad de Retiro</label>
-                            <input type="number" id="retirement-age" class="form-input" placeholder="Ej: 65">
-                            <p class="text-xs text-gray-500 mt-1.5">Nota: Para maximizar beneficios fiscales (ISR Art. 151), la edad de retiro en un Plan Personal de Retiro (PPR) debe ser a los 65 años.</p>
-                        </div>
-                        <div>
-                            <label for="monthly-salary" class="block text-sm font-medium text-gray-700 mb-1">Salario Mensual Bruto (MXN)</label>
-                            <input type="number" id="monthly-salary" class="form-input" placeholder="Ej: 25000">
-                        </div>
-                        <div>
-                            <label for="monthly-savings" class="block text-sm font-medium text-gray-700 mb-1">Ahorro Mensual para el Retiro (MXN)</label>
-                            <input type="number" id="monthly-savings" class="form-input" placeholder="Ej: 2500">
-                        </div>
+                    </div>
+                    <div class="md:col-span-2 lg:col-span-3">
                         <button type="submit" class="btn-primary w-full">
-                            Calcular Proyección
+                            Generar Proyección Financiera
                         </button>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
 
             <!-- Results Section -->
             <div id="results-section" class="results-hidden">
                 <div class="space-y-8">
-                    <!-- Summary -->
+                    
+                    <!-- Main Summary -->
                     <div class="card p-6">
-                        <h2 id="summary-title" class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Resumen para Cliente</h2>
-                        <p id="summary-text" class="text-gray-600 leading-relaxed"></p>
-                    </div>
-
-                    <!-- Projections -->
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Proyección de Inversiones</h2>
-                         <div class="grid grid-cols-2 gap-4 text-center">
-                            <div class="card p-4"><h3 class="text-lg font-semibold text-gray-600">Solo Ahorro</h3><p class="text-xs text-gray-500 mb-2">Sin invertir</p><p class="text-2xl font-bold text-gray-800 currency-amount" id="savings-result">$0</p></div>
-                            <div class="card p-4"><h3 class="text-lg font-semibold" style="color: var(--color-accent-blue);">UDIS</h3><p id="udis-desc" class="text-xs text-gray-500 mb-2"></p><p class="text-2xl font-bold text-gray-800 currency-amount" id="udis-result">$0</p></div>
-                            <div class="card p-4"><h3 class="text-lg font-semibold" style="color: var(--color-primary);">CETES</h3><p id="cetes-desc" class="text-xs text-gray-500 mb-2"></p><p class="text-2xl font-bold text-gray-800 currency-amount" id="cetes-result">$0</p></div>
-                            <div class="card p-4"><h3 class="text-lg font-semibold" style="color: var(--color-accent-gold);">S&P 500</h3><p id="sp500-desc" class="text-xs text-gray-500 mb-2"></p><p class="text-2xl font-bold text-gray-800 currency-amount" id="sp500-result">$0</p></div>
+                        <h2 id="summary-title" class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4"></h2>
+                        <div class="text-center p-4 rounded-lg mb-6" style="background-color: var(--color-primary-light);">
+                            <p class="text-lg" style="color: var(--color-primary);">Para financiar tu retiro necesitarás un capital total de:</p>
+                            <p id="total-goal-summary" class="text-3xl font-bold" style="color: var(--color-primary);"></p>
+                        </div>
+                         <div class="text-center">
+                            <p class="text-lg text-gray-700">Tu plan de acción es comenzar a ahorrar e invertir:</p>
+                            <p id="monthly-savings-summary" class="text-4xl font-bold" style="color: var(--color-success);"></p>
+                            <p class="text-gray-600">mensualmente</p>
                         </div>
                     </div>
 
-                    <!-- Projection Table -->
-                    <div class="card p-6">
-                        <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Crecimiento Anual Simulado</h3>
-                        <div id="projection-table-container" class="mt-4 overflow-x-auto"></div>
+                    <!-- Investment vs. Saving -->
+                    <div class="card p-6 border-l-4" style="border-color: var(--color-success);">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">2. El Vehículo Importa: Invertir vs. "Guardar en el Colchón"</h2>
+                        <div id="investmentAnalysis" class="grid md:grid-cols-3 gap-6 text-center"></div>
                     </div>
                     
-                    <!-- Historical Data Chart -->
-                    <div class="card p-6">
-                        <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Comportamiento Histórico</h3>
-                        <p class="text-sm text-gray-600 mb-4">Rendimiento anual de CETES, S&P 500 e Inflación (UDI) desde 1990.</p>
-                        <div class="h-80">
-                           <canvas id="historical-chart"></canvas>
-                        </div>
+                    <!-- Cost of Waiting -->
+                    <div class="card p-6 border-l-4" style="border-color: var(--color-danger);">
+                         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">3. El Tiempo es Dinero: El Costo de Esperar</h2>
+                         <div id="costAnalysis" class="grid md:grid-cols-3 gap-6 text-center"></div>
                     </div>
 
-                    <!-- Tax Information -->
+                    <!-- Life Timeline -->
                     <div class="card p-6">
-                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Información Fiscal (Estimación)</h2>
-                        <div class="flex flex-col gap-6">
-                            <div><h3 class="text-lg font-semibold text-gray-700">ISR sobre tu Salario</h3><p class="text-gray-600 mt-2">Con un salario mensual de <strong id="salary-info-val"></strong>, tu ingreso anual es de <strong id="annual-salary-val"></strong>.</p><p class="text-gray-600 mt-1">Perteneces a la tasa marginal de ISR del <strong id="isr-rate-val" class="text-red-500"></strong>.</p></div>
-                            <div><h3 class="text-lg font-semibold text-gray-700">Beneficio de un Plan de Retiro (PPR)</h3><p class="text-gray-600 mt-2">Puedes deducir de impuestos hasta <strong id="deductible-amount" class="text-green-500"></strong> anualmente.</p><p class="text-gray-600 mt-1">Al aportar <strong id="annual-savings-val"></strong> a tu plan, podrías recibir una devolución de impuestos de aprox. <strong id="tax-return-val" class="text-green-500"></strong>.</p></div>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">4. Visualiza tu Trayectoria</h2>
+                         <div id="lifeGrid" class="grid grid-cols-10 gap-3 my-6"></div>
+                         <div class="flex justify-center flex-wrap gap-6 text-sm">
+                            <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full past"></div><span>Años Vividos</span></div>
+                            <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full investment"></div><span>Años para Construir</span></div>
+                            <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full retirement"></div><span>Años de Retiro</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Growth Projections -->
+                    <div class="card p-6">
+                         <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Proyección de Crecimiento Anual</h3>
+                         <p class="text-sm text-gray-600 mb-4">Esta tabla simula cómo crecerá tu capital año con año aplicando tu ahorro mensual a diferentes instrumentos.</p>
+                         <div id="projection-table-container" class="mt-4 overflow-x-auto"></div>
+                    </div>
+                    
+                    <!-- Historical Chart -->
+                    <div class="card p-6">
+                        <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Comportamiento Histórico de Inversiones en México</h3>
+                        <p class="text-sm text-gray-600 mb-4">Rendimiento anual de CETES, S&P 500 e Inflación (UDI) desde 1990.</p>
+                        <div class="h-80"><canvas id="historical-chart"></canvas></div>
+                    </div>
+
+                    <!-- Tax Info -->
+                    <div class="card p-6">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">5. Beneficio Adicional: Eficiencia Fiscal</h2>
+                        <div class="flex flex-col gap-6 text-left">
+                            <div><h3 class="text-lg font-semibold text-gray-700">ISR sobre tu Salario</h3><p class="text-gray-600 mt-2">Con un salario mensual de <strong id="salary-info-val"></strong>, tu ingreso anual es de <strong id="annual-salary-val"></strong>. Perteneces a la tasa marginal de ISR del <strong id="isr-rate-val" class="text-red-500"></strong>.</p></div>
+                            <div><h3 class="text-lg font-semibold text-gray-700">Beneficio de un Plan de Retiro (PPR)</h3><p class="text-gray-600 mt-2">Puedes deducir de impuestos hasta <strong id="deductible-amount" class="text-green-600"></strong> anualmente. Al aportar <strong id="annual-savings-val"></strong> a tu plan, podrías recibir una devolución de impuestos de aprox. <strong id="tax-return-val" class="text-green-600 font-bold"></strong>.</p></div>
                         </div>
                     </div>
 
@@ -158,93 +236,252 @@
         </main>
     </div>
 
+    <footer class="bg-white mt-12">
+        <div class="container mx-auto py-6 px-4 sm:px-6 text-center text-gray-600">
+            <p>&copy; 2024 Noctua Capital. Todos los derechos reservados.</p>
+            <p class="text-sm">La información proporcionada es una simulación y no constituye una oferta formal.</p>
+        </div>
+    </footer>
+
+
     <script>
-        // --- CONFIGURATION CONSTANTS (BASED ON HISTORICAL DATA) ---
-        const ANNUAL_INFLATION_RATE = 0.045;
-        const CETES_AVG_ANNUAL_RETURN = 0.05;
-        const SP500_AVG_ANNUAL_RETURN = 0.10;
-        const SP500_CHANCE_OF_LOSS_YEAR = 0.22;
-        const SP500_AVG_LOSS_MIN = -0.25;
-        const SP500_AVG_LOSS_MAX = -0.10;
-        const SP500_AVG_GAIN_YEAR = 0.16;
-        const SP500_VOLATILITY_GAIN_YEARS = 0.12;
+        // --- CONFIGURATION & DATA ---
         const UMA_ANUAL_2024 = 39646.8;
         const MAX_DEDUCTIBLE_UMAS = 5 * UMA_ANUAL_2024;
-
-        const ISR_BRACKETS_2024 = [
-            { lower: 0.01, upper: 8952.49, fixed: 0.00, percent: 0.0192 }, { lower: 8952.50, upper: 75984.55, fixed: 171.88, percent: 0.0640 }, { lower: 75984.56, upper: 133536.07, fixed: 4461.94, percent: 0.1088 }, { lower: 133536.08, upper: 155229.80, fixed: 10723.53, percent: 0.1600 }, { lower: 155229.81, upper: 185852.57, fixed: 14194.54, percent: 0.1792 }, { lower: 185852.58, upper: 374837.88, fixed: 19682.14, percent: 0.2136 }, { lower: 374837.89, upper: 590795.04, fixed: 60048.07, percent: 0.2352 }, { lower: 590795.05, upper: 1127939.65, fixed: 111003.88, percent: 0.3000 }, { lower: 1127939.66, upper: 1503919.53, fixed: 272147.27, percent: 0.3200 }, { lower: 1503919.54, upper: 4511758.59, fixed: 392459.81, percent: 0.3400 }, { lower: 4511758.60, upper: Infinity, fixed: 1415125.09, percent: 0.3500 }
-        ];
-
-        const HISTORICAL_DATA = {
-            years: [1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
-            cetes: [26.8, 17.6, 16.8, 13.9, 13.7, 49.0, 31.3, 19.8, 24.6, 21.3, 15.3, 11.3, 7.1, 6.2, 6.8, 9.2, 7.1, 7.5, 7.8, 4.5, 4.4, 4.2, 4.3, 3.8, 2.9, 3.0, 5.2, 7.1, 7.6, 7.3, 4.5, 6.5, 9.7, 11.3, 11.0],
-            sp500: [-3.1, 30.5, 7.6, 10.1, 1.3, 37.6, 23.0, 33.4, 28.6, 21.0, -9.1, -11.9, -22.1, 28.7, 10.9, 4.9, 15.8, 5.5, -37.0, 26.5, 15.1, 2.1, 16.0, 32.4, 13.7, 1.4, 12.0, 21.8, -4.4, 31.5, 18.4, 28.7, -18.1, 26.3, 15.1],
-            inflation: [29.9, 18.8, 11.9, 8.0, 7.1, 52.0, 27.7, 15.7, 18.6, 12.3, 9.0, 4.4, 5.7, 4.0, 5.2, 3.3, 4.1, 3.8, 6.5, 3.6, 4.4, 3.8, 3.6, 4.0, 4.1, 2.1, 3.4, 6.8, 4.8, 2.8, 3.2, 7.4, 7.8, 4.7, 4.4]
-        };
+        const ISR_BRACKETS_2024 = [ { lower: 0.01, upper: 8952.49, fixed: 0.00, percent: 0.0192 }, { lower: 8952.50, upper: 75984.55, fixed: 171.88, percent: 0.0640 }, { lower: 75984.56, upper: 133536.07, fixed: 4461.94, percent: 0.1088 }, { lower: 133536.08, upper: 155229.80, fixed: 10723.53, percent: 0.1600 }, { lower: 155229.81, upper: 185852.57, fixed: 14194.54, percent: 0.1792 }, { lower: 185852.58, upper: 374837.88, fixed: 19682.14, percent: 0.2136 }, { lower: 374837.89, upper: 590795.04, fixed: 60048.07, percent: 0.2352 }, { lower: 590795.05, upper: 1127939.65, fixed: 111003.88, percent: 0.3000 }, { lower: 1127939.66, upper: 1503919.53, fixed: 272147.27, percent: 0.3200 }, { lower: 1503919.54, upper: 4511758.59, fixed: 392459.81, percent: 0.3400 }, { lower: 4511758.60, upper: Infinity, fixed: 1415125.09, percent: 0.3500 } ];
+        const HISTORICAL_DATA = { years: [1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024], cetes: [26.8, 17.6, 16.8, 13.9, 13.7, 49.0, 31.3, 19.8, 24.6, 21.3, 15.3, 11.3, 7.1, 6.2, 6.8, 9.2, 7.1, 7.5, 7.8, 4.5, 4.4, 4.2, 4.3, 3.8, 2.9, 3.0, 5.2, 7.1, 7.6, 7.3, 4.5, 6.5, 9.7, 11.3, 11.0], sp500: [-3.1, 30.5, 7.6, 10.1, 1.3, 37.6, 23.0, 33.4, 28.6, 21.0, -9.1, -11.9, -22.1, 28.7, 10.9, 4.9, 15.8, 5.5, -37.0, 26.5, 15.1, 2.1, 16.0, 32.4, 13.7, 1.4, 12.0, 21.8, -4.4, 31.5, 18.4, 28.7, -18.1, 26.3, 15.1], inflation: [29.9, 18.8, 11.9, 8.0, 7.1, 52.0, 27.7, 15.7, 18.6, 12.3, 9.0, 4.4, 5.7, 4.0, 5.2, 3.3, 4.1, 3.8, 6.5, 3.6, 4.4, 3.8, 3.6, 4.0, 4.1, 2.1, 3.4, 6.8, 4.8, 2.8, 3.2, 7.4, 7.8, 4.7, 4.4] };
 
         const form = document.getElementById('retirement-form');
         const resultsSection = document.getElementById('results-section');
         let historicalChart = null;
 
-        const formatCurrency = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+        const formatCurrency = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
 
-        function calculateProjection(monthlyContribution, years, avgAnnualReturn, useVolatility = false) {
-            let history = [];
-            let totalInvested = 0;
-            let currentContribution = monthlyContribution;
-            for (let year = 0; year < years; year++) {
-                let annualContribution = currentContribution * 12;
-                let annualReturn = avgAnnualReturn;
-                if (useVolatility) {
-                    if (Math.random() < SP500_CHANCE_OF_LOSS_YEAR) {
-                        annualReturn = Math.random() * (SP500_AVG_LOSS_MAX - SP500_AVG_LOSS_MIN) + SP500_AVG_LOSS_MIN;
-                    } else {
-                        const z = Math.sqrt(-2.0 * Math.log(Math.random())) * Math.cos(2.0 * Math.PI * Math.random());
-                        annualReturn = SP500_AVG_GAIN_YEAR + z * SP500_VOLATILITY_GAIN_YEARS;
-                    }
-                }
-                totalInvested += annualContribution;
-                if (avgAnnualReturn > 0 || useVolatility) { totalInvested *= (1 + annualReturn); }
-                history.push({ value: totalInvested, annualReturn: annualReturn });
-                currentContribution *= (1 + ANNUAL_INFLATION_RATE);
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                handleCalculation();
+            });
+        });
+
+        // --- Main Calculation Handler ---
+        function handleCalculation() {
+            // 1. GET AND PARSE VALUES
+            const inputs = {
+                name: document.getElementById('name').value.trim() || 'Cliente',
+                currentAge: parseInt(document.getElementById('current-age').value),
+                retirementAge: parseInt(document.getElementById('retirement-age').value),
+                lifespan: parseInt(document.getElementById('lifespan').value),
+                monthlyRetirementIncome: parseFloat(document.getElementById('monthly-retirement-income').value),
+                monthlySalary: parseFloat(document.getElementById('monthly-salary').value),
+                inflationRate: parseFloat(document.getElementById('inflation-rate').value),
+                interestRate: parseFloat(document.getElementById('interest-rate').value),
+            };
+
+            // 2. VALIDATE
+            if (!validateInputs(inputs)) return;
+
+            // 3. CORE CALCULATIONS
+            const yearsToInvest = inputs.retirementAge - inputs.currentAge;
+            const retirementYears = inputs.lifespan - inputs.retirementAge;
+
+            const inflatedMonthlyIncome = inputs.monthlyRetirementIncome * Math.pow(1 + (inputs.inflationRate / 100), yearsToInvest);
+            const totalSavingsGoal = inflatedMonthlyIncome * 12 * retirementYears;
+            
+            const monthlySavingsWithInvestment = calculateMonthlySavings(totalSavingsGoal, inputs.interestRate, yearsToInvest);
+
+            // 4. RENDER UI
+            resultsSection.classList.remove('results-hidden');
+            resultsSection.classList.add('results-visible');
+
+            renderMainSummary(inputs.name, totalSavingsGoal, monthlySavingsWithInvestment);
+            renderInvestmentComparison(totalSavingsGoal, inputs.interestRate, yearsToInvest);
+            renderCostOfWaiting(totalSavingsGoal, inputs.interestRate, yearsToInvest);
+            renderLifeGrid(inputs.lifespan, inputs.currentAge, inputs.retirementAge);
+            renderProjections(monthlySavingsWithInvestment, yearsToInvest, inputs.inflationRate);
+            renderTaxInfo(inputs.monthlySalary, monthlySavingsWithInvestment);
+            
+            if (!historicalChart) createHistoricalChart();
+            
+            if (window.innerWidth < 1024) {
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
             }
-            return history;
+        }
+        
+        // --- Calculation & Validation Helpers ---
+        function validateInputs(values) {
+            for (const key in values) {
+                if (key !== 'name' && (isNaN(values[key]) || values[key] <= 0)) {
+                    alert('Por favor, ingresa valores numéricos y positivos en todos los campos.');
+                    return false;
+                }
+            }
+            if (values.currentAge >= values.retirementAge) {
+                alert('La edad actual debe ser menor que la edad de retiro.');
+                return false;
+            }
+            if (values.retirementAge >= values.lifespan) {
+                alert('La edad de retiro debe ser menor a la esperanza de vida.');
+                return false;
+            }
+            return true;
         }
 
-        function calculateISR(annualSalary) {
-            const bracket = ISR_BRACKETS_2024.find(b => annualSalary >= b.lower && annualSalary <= b.upper);
-            return { rate: bracket ? bracket.percent : 0, bracket: bracket };
+        function calculateMonthlySavings(futureValue, annualRate, years) {
+            const monthlyRate = annualRate / 100 / 12;
+            const numberOfMonths = years * 12;
+            if (numberOfMonths <= 0) return Infinity;
+            if (monthlyRate === 0) return futureValue / numberOfMonths;
+            const numerator = futureValue * monthlyRate;
+            const denominator = Math.pow(1 + monthlyRate, numberOfMonths) - 1;
+            return denominator === 0 ? Infinity : numerator / denominator;
+        }
+        
+        function runProjection(monthlyContribution, years, avgAnnualReturn, inflationRate, useVolatility = false) {
+             let history = [];
+             let totalValue = 0;
+             let currentContribution = monthlyContribution;
+             for (let year = 0; year < years; year++) {
+                 let annualContribution = currentContribution * 12;
+                 let annualReturn = avgAnnualReturn;
+                 if (useVolatility) {
+                     annualReturn = (Math.random() < 0.22) ? - (Math.random() * 0.15 + 0.10) : (Math.random() * 0.24 + 0.04);
+                 }
+                 totalValue = (totalValue + annualContribution) * (1 + annualReturn);
+                 history.push({ value: totalValue, annualReturn: annualReturn });
+                 currentContribution *= (1 + inflationRate);
+             }
+             return history;
         }
 
-        function createProjectionTable(years, savingsData, udisData, cetesData, sp500Data) {
+        // --- RENDER FUNCTIONS ---
+        function renderMainSummary(name, totalGoal, monthlySavings) {
+            document.getElementById('summary-title').textContent = `Proyección para ${name}`;
+            document.getElementById('total-goal-summary').textContent = formatCurrency(totalGoal);
+            document.getElementById('monthly-savings-summary').textContent = formatCurrency(monthlySavings);
+        }
+
+        function renderInvestmentComparison(savingsGoal, interestRate, yearsToInvest) {
+            const container = document.getElementById('investmentAnalysis');
+            const savingsWith = calculateMonthlySavings(savingsGoal, interestRate, yearsToInvest);
+            const savingsWithout = calculateMonthlySavings(savingsGoal, 0, yearsToInvest);
+            
+            container.innerHTML = `
+                <div>
+                    <p class="text-gray-600">Ahorro mensual SIN INVERTIR</p>
+                    <p class="text-2xl font-bold text-gray-800">${formatCurrency(savingsWithout)}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Ahorro mensual INVIRTIENDO al ${interestRate}%</p>
+                    <p class="text-2xl font-bold" style="color: var(--color-success);">${formatCurrency(savingsWith)}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">La inversión te ahorra cada mes:</p>
+                    <p class="text-2xl font-bold" style="color: var(--color-success);">${formatCurrency(savingsWithout - savingsWith)}</p>
+                </div>
+            `;
+        }
+        
+        function renderCostOfWaiting(savingsGoal, interestRate, yearsToInvest) {
+            const container = document.getElementById('costAnalysis');
+            if (yearsToInvest < 1) {
+                container.parentElement.style.display = 'none';
+                return;
+            }
+            container.parentElement.style.display = 'block';
+
+            const savingsToday = calculateMonthlySavings(savingsGoal, interestRate, yearsToInvest);
+            const savingsInOneYear = calculateMonthlySavings(savingsGoal, interestRate, yearsToInvest - 1);
+
+            container.innerHTML = `
+                <div>
+                    <p class="text-gray-600">Ahorro mensual HOY</p>
+                    <p class="text-2xl font-bold text-gray-800">${formatCurrency(savingsToday)}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Ahorro mensual en 1 AÑO</p>
+                    <p class="text-2xl font-bold" style="color: var(--color-danger);">${formatCurrency(savingsInOneYear)}</p>
+                </div>
+                 <div>
+                    <p class="text-gray-600">Costo mensual por esperar:</p>
+                    <p class="text-2xl font-bold" style="color: var(--color-danger);">+ ${formatCurrency(savingsInOneYear - savingsToday)}</p>
+                </div>
+            `;
+        }
+
+        function renderLifeGrid(lifespan, currentAge, retirementAge) {
+            const grid = document.getElementById('lifeGrid');
+            grid.innerHTML = '';
+            for (let year = 1; year <= lifespan; year++) {
+                const circle = document.createElement('div');
+                circle.classList.add('year-circle');
+                if (year <= currentAge) circle.classList.add('past');
+                else if (year > retirementAge) circle.classList.add('retirement');
+                else circle.classList.add('investment');
+                circle.textContent = year;
+                grid.appendChild(circle);
+            }
+        }
+        
+        function renderProjections(monthlySavings, yearsToSave, inflationRate) {
+            const inflation = inflationRate / 100;
+            const CETES_RETURN = 0.05; 
+            const SP500_RETURN = 0.10;
+
+            const savingsProj = runProjection(monthlySavings, yearsToSave, 0, inflation);
+            const cetesProj = runProjection(monthlySavings, yearsToSave, CETES_RETURN, inflation);
+            const sp500Proj = runProjection(monthlySavings, yearsToSave, SP500_RETURN, inflation, true);
+
+            createProjectionTable(yearsToSave, savingsProj, cetesProj, sp500Proj);
+        }
+        
+        function createProjectionTable(years, savingsData, cetesData, sp500Data) {
             const container = document.getElementById('projection-table-container');
             let tableHTML = `<table class="min-w-full divide-y divide-gray-200 text-sm">
-                               <thead class="bg-gray-50">
-                                 <tr>
-                                   <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Año</th>
-                                   <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Solo Ahorro</th>
-                                   <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UDIS</th>
-                                   <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CETES</th>
-                                   <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">S&P 500</th>
-                                 </tr>
-                               </thead>
-                               <tbody class="bg-white divide-y divide-gray-200">`;
+                <thead class="bg-gray-50"><tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Año</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Solo Ahorro</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">CETES (Sim)</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">S&P 500 (Sim)</th>
+                </tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
             for (let i = 0; i < years; i++) {
                 const sp500YearData = sp500Data[i];
-                const colorClass = sp500YearData.annualReturn < 0 ? 'text-red-500' : 'text-green-500';
+                const colorClass = sp500YearData.annualReturn < 0 ? 'text-red-500' : 'text-green-600';
                 tableHTML += `<tr>
-                                <td class="px-4 py-3 whitespace-nowrap font-medium text-gray-900">${i + 1}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-gray-600">${formatCurrency(savingsData[i].value)}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-gray-600">${formatCurrency(udisData[i].value)}</td>
-                                <td class="px-4 py-3 whitespace-nowrap text-gray-600">${formatCurrency(cetesData[i].value)}</td>
-                                <td class="px-4 py-3 whitespace-nowrap">
-                                    <div class="font-semibold ${colorClass}">${formatCurrency(sp500YearData.value)}</div>
-                                    <div class="text-xs font-normal ${colorClass}">${(sp500YearData.annualReturn * 100).toFixed(2)}%</div>
-                                </td>
-                              </tr>`;
+                    <td class="px-4 py-3 font-medium text-gray-900">${i + 1}</td>
+                    <td class="px-4 py-3 text-gray-600">${formatCurrency(savingsData[i].value)}</td>
+                    <td class="px-4 py-3 text-gray-600">${formatCurrency(cetesData[i].value)}</td>
+                    <td class="px-4 py-3">
+                        <div class="font-semibold ${colorClass}">${formatCurrency(sp500YearData.value)}</div>
+                        <div class="text-xs font-normal ${colorClass}">${(sp500YearData.annualReturn * 100).toFixed(1)}%</div>
+                    </td>
+                </tr>`;
             }
             tableHTML += `</tbody></table>`;
             container.innerHTML = tableHTML;
+        }
+        
+        function renderTaxInfo(monthlySalary, monthlySavings) {
+             const annualSalary = monthlySalary * 12;
+             const annualSavings = monthlySavings * 12;
+             const isrBracket = ISR_BRACKETS_2024.find(b => annualSalary >= b.lower && annualSalary <= b.upper);
+             const isrRate = isrBracket ? isrBracket.percent : 0;
+             const maxDeductible = Math.min(annualSalary * 0.10, MAX_DEDUCTIBLE_UMAS);
+             const taxReturn = Math.min(annualSavings, maxDeductible) * isrRate;
+
+             document.getElementById('salary-info-val').textContent = formatCurrency(monthlySalary);
+             document.getElementById('annual-salary-val').textContent = formatCurrency(annualSalary);
+             document.getElementById('isr-rate-val').textContent = `${(isrRate * 100).toFixed(2)}%`;
+             document.getElementById('deductible-amount').textContent = formatCurrency(maxDeductible);
+             document.getElementById('annual-savings-val').textContent = formatCurrency(annualSavings);
+             document.getElementById('tax-return-val').textContent = formatCurrency(taxReturn);
         }
 
         function createHistoricalChart() {
@@ -256,16 +493,13 @@
                     labels: HISTORICAL_DATA.years,
                     datasets: [{
                         label: 'S&P 500', data: HISTORICAL_DATA.sp500,
-                        borderColor: '#ca8a04', backgroundColor: 'rgba(202, 138, 4, 0.1)',
-                        tension: 0.1, yAxisID: 'y'
+                        borderColor: 'var(--color-accent-gold)', backgroundColor: 'rgba(202, 138, 4, 0.1)',
                     }, {
                         label: 'CETES 28 días', data: HISTORICAL_DATA.cetes,
-                        borderColor: '#114a43', backgroundColor: 'rgba(17, 74, 67, 0.1)',
-                        tension: 0.1, yAxisID: 'y'
+                        borderColor: 'var(--color-primary)', backgroundColor: 'rgba(17, 74, 67, 0.1)',
                     }, {
                         label: 'Inflación (UDI)', data: HISTORICAL_DATA.inflation,
                         borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.1, yAxisID: 'y'
                     }]
                 },
                 options: {
@@ -275,75 +509,7 @@
                 }
             });
         }
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value || 'Cliente';
-            const currentAge = parseInt(document.getElementById('current-age').value);
-            const retirementAge = parseInt(document.getElementById('retirement-age').value);
-            const monthlySalary = parseFloat(document.getElementById('monthly-salary').value);
-            const monthlySavings = parseFloat(document.getElementById('monthly-savings').value);
-
-            if (isNaN(currentAge) || isNaN(retirementAge) || isNaN(monthlySalary) || isNaN(monthlySavings) || currentAge >= retirementAge || monthlySavings <= 0) {
-                alert('Por favor, ingresa valores válidos.'); return;
-            }
-
-            const yearsToSave = retirementAge - currentAge;
-            const annualSavings = monthlySavings * 12;
-
-            const savingsProjection = calculateProjection(monthlySavings, yearsToSave, 0);
-            const udisProjection = calculateProjection(monthlySavings, yearsToSave, ANNUAL_INFLATION_RATE);
-            const cetesProjection = calculateProjection(monthlySavings, yearsToSave, CETES_AVG_ANNUAL_RETURN);
-            const sp500Projection = calculateProjection(monthlySavings, yearsToSave, SP500_AVG_ANNUAL_RETURN, true);
-
-            const finalSavings = savingsProjection.slice(-1)[0].value;
-            const finalUdis = udisProjection.slice(-1)[0].value;
-            const finalCetes = cetesProjection.slice(-1)[0].value;
-            const finalSp500 = sp500Projection.slice(-1)[0].value;
-
-            const annualSalary = monthlySalary * 12;
-            const isrInfo = calculateISR(annualSalary);
-            const maxDeductible = Math.min(annualSalary * 0.10, MAX_DEDUCTIBLE_UMAS);
-            const taxReturn = Math.min(annualSavings, maxDeductible) * isrInfo.rate;
-
-            resultsSection.classList.remove('results-hidden');
-            resultsSection.classList.add('results-visible');
-            
-            document.getElementById('summary-title').textContent = `Resumen para ${name}`;
-            document.getElementById('summary-text').innerHTML = `Ahorrarás durante <strong>${yearsToSave} años</strong>. A continuación se muestra una simulación de cómo crecería tu dinero, considerando una inflación promedio del <strong>${(ANNUAL_INFLATION_RATE * 100).toFixed(1)}%</strong> anual.`;
-            
-            document.getElementById('udis-desc').textContent = `Rend. Histórico: ${(ANNUAL_INFLATION_RATE * 100).toFixed(1)}%`;
-            document.getElementById('cetes-desc').textContent = `Rend. Histórico: ${(CETES_AVG_ANNUAL_RETURN * 100).toFixed(1)}%`;
-            document.getElementById('sp500-desc').textContent = `Rend. Histórico: ${(SP500_AVG_ANNUAL_RETURN * 100).toFixed(1)}%`;
-
-            document.getElementById('savings-result').textContent = formatCurrency(finalSavings);
-            document.getElementById('udis-result').textContent = formatCurrency(finalUdis);
-            document.getElementById('cetes-result').textContent = formatCurrency(finalCetes);
-            document.getElementById('sp500-result').textContent = formatCurrency(finalSp500);
-
-            document.getElementById('salary-info-val').textContent = formatCurrency(monthlySalary);
-            document.getElementById('annual-salary-val').textContent = formatCurrency(annualSalary);
-            document.getElementById('isr-rate-val').textContent = `${(isrInfo.rate * 100).toFixed(2)}%`;
-            document.getElementById('deductible-amount').textContent = formatCurrency(maxDeductible);
-            document.getElementById('annual-savings-val').textContent = formatCurrency(annualSavings);
-            document.getElementById('tax-return-val').textContent = formatCurrency(taxReturn);
-
-            createProjectionTable(yearsToSave, savingsProjection, udisProjection, cetesProjection, sp500Projection);
-            createHistoricalChart();
-            
-            if (window.innerWidth < 1024) {
-                 resultsSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('retirement-form').reset();
-            document.getElementById('name').value = '';
-            document.getElementById('current-age').value = '';
-            document.getElementById('retirement-age').value = '';
-            document.getElementById('monthly-salary').value = '';
-            document.getElementById('monthly-savings').value = '';
-        });
     </script>
 </body>
 </html>
+
