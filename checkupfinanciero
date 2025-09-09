@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noctua Capital - CHECK-UP Financiero</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #114a43;
+            --color-primary-dark: #0c3b36;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            padding-top: 68px; /* Offset for fixed header */
+        }
+         .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+    <!-- Header / Navigation -->
+    <header class="bg-[--color-primary-dark] shadow-md fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+            <a href="asesor_retiro_digital.html" class="flex items-center">
+                <svg viewBox="0 0 200 40" class="h-8 w-auto" xmlns="http://www.w3.org/2000/svg">
+                   <text x="0" y="30" font-family="Inter, sans-serif" font-size="28" font-weight="500" fill="white">Noctua Capital</text>
+                </svg>
+            </a>
+            <!-- Desktop Menu -->
+            <ul class="hidden md:flex items-center space-x-8 text-white">
+                <li><a href="#" class="hover:text-gray-300 transition-colors">Contacto</a></li>
+                <li><a href="#" class="font-semibold border-b-2 border-white">CHECK-UP financiero</a></li>
+                <li><a href="asesor_retiro_digital.html" class="hover:text-gray-300 transition-colors">Calculadoras</a></li>
+            </ul>
+            <!-- Mobile Menu Button (Hamburger) -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-[--color-primary-dark]">
+            <ul class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-white">
+                 <li><a href="#" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">Contacto</a></li>
+                 <li><a href="#" class="block px-3 py-2 rounded-md bg-[--color-primary] font-semibold">CHECK-UP financiero</a></li>
+                 <li><a href="asesor_retiro_digital.html" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">Calculadoras</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 sm:p-6">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold" style="color: var(--color-primary);">CHECK-UP Financiero</h1>
+            <p class="mt-2 text-base sm:text-lg text-gray-600">Analiza tu salud financiera y toma el control de tu futuro.</p>
+        </div>
+
+        <!-- Placeholder Content -->
+        <div class="card p-8 text-center">
+            <h2 class="text-2xl font-semibold text-gray-700">Página en Construcción</h2>
+            <p class="mt-4 text-gray-500">Estamos trabajando en esta sección para traerte una nueva herramienta increíble. ¡Vuelve pronto!</p>
+        </div>
+    </main>
+
+    <footer class="bg-white mt-12">
+        <div class="container mx-auto py-6 px-4 sm:px-6 text-center text-gray-600">
+            <p>&copy; 2024 Noctua Capital. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
