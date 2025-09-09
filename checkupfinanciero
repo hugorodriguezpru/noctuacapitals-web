@@ -4,24 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noctua Capital - CHECK-UP Financiero</title>
+    <!-- Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles & Branding -->
     <style>
         :root {
             --color-primary: #114a43;
             --color-primary-dark: #0c3b36;
+            --brand-primary: #114a43;
+            --brand-primary-dark: #0c352e;
+            --brand-primary-light: #1a6f64;
+            --brand-secondary: #f59e0b; /* Amber 500 for highlights */
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f8fafc; /* Tailwind's gray-50 */
             padding-top: 68px; /* Offset for fixed header */
         }
-         .card {
+        .card {
             background-color: white;
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .brand-primary-bg { background-color: var(--brand-primary); }
+        .brand-primary-text { color: var(--brand-primary); }
+        .brand-primary-ring { ring-color: var(--brand-primary); }
+        .brand-primary-border { border-color: var(--brand-primary); }
+        .brand-primary-bg-hover:hover { background-color: var(--brand-primary-dark); }
+        .brand-secondary-text { color: var(--brand-secondary); }
+        .brand-secondary-border { border-color: var(--brand-secondary); }
+        .brand-secondary-bg { background-color: var(--brand-secondary); }
+        
+        .form-radio:checked {
+            background-color: var(--brand-primary);
+            border-color: var(--brand-primary);
+        }
+        .form-radio:checked:after {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            margin: 2px;
+            border-radius: 50%;
+            background: white;
+        }
+        
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb; /* gray-200 */
+            border-radius: 9999px;
+            outline: none;
+            transition: background-color 0.2s;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--brand-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        input[type=range]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--brand-primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
         }
     </style>
 </head>
@@ -30,7 +100,7 @@
     <header class="bg-[--color-primary-dark] shadow-md fixed top-0 left-0 right-0 z-50">
         <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
             <a href="asesor_retiro_digital.html" class="flex items-center">
-                <svg viewBox="0 0 200 40" class="h-8 w-auto" xmlns="http://www.w3.org/2000/svg">
+                 <svg viewBox="0 0 200 40" class="h-8 w-auto" xmlns="http://www.w3.org/2000/svg">
                    <text x="0" y="30" font-family="Inter, sans-serif" font-size="28" font-weight="500" fill="white">Noctua Capital</text>
                 </svg>
             </a>
@@ -58,15 +128,25 @@
     </header>
 
     <main class="container mx-auto p-4 sm:p-6">
-        <div class="text-center mb-8">
-            <h1 class="text-2xl sm:text-3xl font-bold" style="color: var(--color-primary);">CHECK-UP Financiero</h1>
-            <p class="mt-2 text-base sm:text-lg text-gray-600">Analiza tu salud financiera y toma el control de tu futuro.</p>
-        </div>
+        <div id="financial-checkup-container" class="w-full max-w-5xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200">
+            
+            <!-- Quiz section will be rendered here by JavaScript -->
+            <div id="quiz-section"></div>
 
-        <!-- Placeholder Content -->
-        <div class="card p-8 text-center">
-            <h2 class="text-2xl font-semibold text-gray-700">Página en Construcción</h2>
-            <p class="mt-4 text-gray-500">Estamos trabajando en esta sección para traerte una nueva herramienta increíble. ¡Vuelve pronto!</p>
+            <!-- Completion screen shown after quiz -->
+            <div id="completion-screen" class="hidden animate-fade-in text-center py-12">
+                 <svg class="mx-auto h-16 w-16 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                 </svg>
+                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mt-6">¡Análisis completado!</h1>
+                 <p class="text-gray-600 mt-2 max-w-xl mx-auto">Hemos procesado tus respuestas para generar un reporte personalizado con áreas de oportunidad clave para tu bienestar financiero.</p>
+                 <button id="view-results-btn" class="mt-8 brand-primary-bg text-white font-bold py-3 px-8 rounded-lg brand-primary-bg-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+                     Ver mis Resultados
+                 </button>
+            </div>
+
+            <!-- Analysis report section will be rendered here -->
+            <div id="analysis-section" class="hidden"></div>
         </div>
     </main>
 
@@ -77,13 +157,790 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
         });
+
+        // =================================================================================
+        // DEVMAESTRO INSIGHT: APPLICATION ARCHITECTURE
+        // The original code was a single, long script. This refactored version uses a
+        // modular pattern (the `FinancialCheckupApp` object). This approach, known as
+        // "Separation of Concerns," makes the code cleaner, easier to debug, and
+        // more maintainable. Each part of the app (quiz logic, analysis, rendering)
+        // now has its own dedicated space.
+        // =================================================================================
+
+        var FinancialCheckupApp = {
+            // --- STATE MANAGEMENT ---
+            // Centralizing the application's state (data) makes it easier to track and manage.
+            state: {
+                currentQuestionIndex: 0,
+                userAnswers: {
+                    childrenData: [],
+                    currentInsurances: []
+                },
+                analysisResults: null
+            },
+
+            // --- CONFIGURATION ---
+            // Storing questions as data allows for a dynamic and easily updatable quiz.
+            questions: [
+                 { id: 'postalCode', section: 'Información Particular', type: 'text', text: '¿Cuál es tu código postal?', placeholder: 'Ej: 72000' },
+                 { id: 'birthDate', section: 'Información Particular', type: 'date', text: '¿Cuál es tu fecha de nacimiento?' },
+                 { id: 'gender', section: 'Información Particular', type: 'radio', text: '¿Con qué género te identificas?', options: ['Hombre', 'Mujer', 'Prefiero no responder'] },
+                 { id: 'maritalStatus', section: 'Información Particular', type: 'radio', text: '¿Cuál es tu estado civil actual?', options: ['Soltero', 'Casado', 'Unión libre', 'Divorciado', 'Viudo'] },
+                 { id: 'educationLevel', section: 'Información Particular', type: 'radio', text: '¿Cuál es tu nivel más alto de estudios?', options: ['Sin estudios', 'Primaria', 'Secundaria', 'Preparatoria', 'Universidad', 'Maestría', 'Doctorado'] },
+                 { id: 'occupation', section: 'Información Particular', type: 'radio', text: '¿Cuál es tu ocupación actual?', options: ['Empleado', 'Pensionado', 'Independiente', 'Negocio propio', 'Empresario', 'Desempleado'] },
+                 { id: 'workExperience', section: 'Información Particular', type: 'number', text: '¿Cuántos años de experiencia laboral tienes?', placeholder: 'Ej: 10', unit: 'años' },
+                 { id: 'spouseAge', section: 'Datos de Cónyuge', type: 'number', text: '¿Qué edad tiene tu pareja?', placeholder: 'Ej: 35', unit: 'años', condition: function(data) { return ['Casado', 'Unión libre'].indexOf(data.maritalStatus) > -1; } },
+                 { id: 'spouseGender', section: 'Datos de Cónyuge', type: 'radio', text: '¿Cuál es el género de tu pareja?', options: ['Hombre', 'Mujer', 'Prefiero no responder'], condition: function(data) { return ['Casado', 'Unión libre'].indexOf(data.maritalStatus) > -1; } },
+                 { id: 'hasChildren', section: 'Datos de Hijos', type: 'radio', text: '¿Tienes hijos?', options: ['Sí', 'No'] },
+                 { id: 'childrenData', section: 'Datos de Hijos', type: 'children', text: 'Ingresa los datos de tus hijos.', condition: function(data) { return data.hasChildren === 'Sí'; } },
+                 { id: 'otherDependents', section: 'Dependientes', type: 'radio', text: '¿Tienes otros dependientes económicos (sin contar cónyuge e hijos)?', options: ['No tengo', 'Madre o padre', 'Hermanos', 'Abuelos', 'Otro'] },
+                 { id: 'mainGoal', section: 'Metas Financieras', type: 'text', text: 'Actualmente, ¿cuál es tu principal meta o preocupación financiera?', placeholder: 'Ej: La seguridad de mi familia' },
+                 { id: 'hasPets', section: 'Bienes', type: 'radio', text: '¿Tienes mascotas en tu hogar (perro/gato)?', options: ['Sí', 'No'] },
+                 { id: 'hasCar', section: 'Bienes', type: 'radio', text: '¿Tienes automóvil?', options: ['Sí', 'No'] },
+                 { id: 'hasHouse', section: 'Bienes', type: 'radio', text: '¿Tienes casa y/o departamento propio?', options: ['Sí', 'No'] },
+                 { id: 'familyIncome', section: 'Hábitos Financieros', type: 'radio', text: 'Selecciona el rango mensual aproximado de los ingresos familiares:', options: ['$14,999 o menos', '$15,000 - $29,999', '$30,000 - $44,999', '$45,000 - $64,999', '$65,000 - $79,999', '$80,000 - $94,999', '$95,000 - $109,999', '$110,000 o más'] },
+                 { id: 'monthlySavingsAmount', section: 'Hábitos Financieros', type: 'number', text: 'Aproximadamente, ¿cuánto ahorras mensualmente?', placeholder: 'Ej: 2500', unit: '$' },
+                 { id: 'emergencyFund', section: 'Hábitos Financieros', type: 'radio', text: '¿Cuentas con un fondo de emergencia para imprevistos?', options: ['No tengo un fondo', 'Sí, menos de 1 mes de mis gastos', 'Sí, entre 1 y 3 meses de mis gastos', 'Sí, entre 3 y 6 meses de mis gastos', 'Sí, más de 6 meses de mis gastos'] },
+                 { id: 'percentageDebt', section: 'Hábitos Financieros', type: 'slider', text: '¿Qué porcentaje de tu ingreso destinas para cubrir deudas?', min: 0, max: 100, step: 5, unit: '%' },
+                 { id: 'currentInsurances', section: 'Protección Actual', type: 'checkbox', text: '¿Qué seguros tienes contratados actualmente?', options: [
+                     { value: 'Auto', label: 'Auto', icon: '🚗' }, { value: 'Hogar', label: 'Hogar', icon: '🏠' },
+                     { value: 'Gastos Médicos Mayores', label: 'GMM', icon: '📋' }, { value: 'Mascota', label: 'Mascota', icon: '🐾' },
+                     { value: 'Educación', label: 'Educación', icon: '🎓' }, { value: 'Retiro', label: 'Retiro', icon: '👴' },
+                     { value: 'Inversión', label: 'Inversión', icon: '📈' }, { value: 'Vida', label: 'Vida', icon: '🎗️' },
+                     { value: 'IMSS/ISSSTE', label: 'IMSS/ISSSTE', icon: '🏢' }, { value: 'Negocio', label: 'Negocio', icon: '🏪' },
+                     { value: 'Ninguno', label: 'Ninguno', icon: '😔' }
+                 ]},
+                 { id: 'medicalPreference', section: 'Estilo de Vida', type: 'radio', text: 'En caso de una enfermedad, ¿dónde preferirías atenderte?', options: ['Hospital Privado', 'Hospital Público'] },
+                 { id: 'retirementAge', section: 'Estilo de Vida', type: 'number', text: '¿A qué edad te gustaría retirarte?', placeholder: '65', unit: 'años' },
+            ],
+            
+            // --- DOM ELEMENTS ---
+            // Caching DOM elements improves performance by avoiding repeated queries to the document.
+            elements: {
+                quizSection: document.getElementById('quiz-section'),
+                completionScreen: document.getElementById('completion-screen'),
+                analysisSection: document.getElementById('analysis-section'),
+                viewResultsBtn: document.getElementById('view-results-btn'),
+            },
+
+            // --- INITIALIZATION ---
+            init: function() {
+                this.elements.viewResultsBtn.addEventListener('click', function() {
+                    FinancialCheckupApp.elements.completionScreen.classList.add('hidden');
+                    FinancialCheckupApp.elements.analysisSection.classList.remove('hidden');
+                    FinancialCheckupApp.analysis.renderReport(FinancialCheckupApp.state.userAnswers);
+                });
+                this.quiz.renderCurrentQuestion();
+            },
+
+            // =========================================================================
+            // QUIZ MODULE
+            // All logic related to displaying questions, handling navigation,
+            // and saving answers is encapsulated here.
+            // =========================================================================
+            quiz: {
+                getVisibleQuestions: function() {
+                    var app = FinancialCheckupApp;
+                    return app.questions.filter(function(q) {
+                        return !q.condition || q.condition(app.state.userAnswers);
+                    });
+                },
+
+                handleNext: function() {
+                    if (this.saveAnswer()) {
+                        FinancialCheckupApp.state.currentQuestionIndex++;
+                        this.renderCurrentQuestion();
+                    } else {
+                        // DEVMAESTRO INSIGHT: User Feedback
+                        // Provide clear feedback if a question is not answered. A simple alert
+                        // is disruptive. A subtle visual cue is much better UX.
+                        var qContainer = document.getElementById('question-container');
+                        qContainer.classList.add('animate-shake');
+                        setTimeout(function() { qContainer.classList.remove('animate-shake'); }, 600);
+                        
+                        // Add temporary animation style
+                        if (!document.getElementById('shake-style')) {
+                            var style = document.createElement('style');
+                            style.id = 'shake-style';
+                            style.innerHTML = '@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } } .animate-shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; }';
+                            document.head.appendChild(style);
+                        }
+                    }
+                },
+
+                handleBack: function() {
+                    if (FinancialCheckupApp.state.currentQuestionIndex > 0) {
+                        FinancialCheckupApp.state.currentQuestionIndex--;
+                        this.renderCurrentQuestion();
+                    }
+                },
+                
+                saveAnswer: function() {
+                    var question = this.getVisibleQuestions()[FinancialCheckupApp.state.currentQuestionIndex];
+                    if (!question) return false;
+
+                    var id = question.id;
+                    var type = question.type;
+                    var answers = FinancialCheckupApp.state.userAnswers;
+
+                    switch (type) {
+                        case 'radio':
+                            var selectedRadio = document.querySelector('input[name="' + id + '"]:checked');
+                            if (!selectedRadio) return false;
+                            answers[id] = selectedRadio.value;
+                            break;
+                        case 'checkbox':
+                            if (answers.currentInsurances.length === 0) return false;
+                            // Data is already saved by the event listener in `attachEventListeners`
+                            break;
+                        case 'slider':
+                             answers[id] = document.getElementById(id).value;
+                             break;
+                        case 'children':
+                            var childrenAreValid = true;
+                            answers.childrenData.forEach(function(c) {
+                                if (!c.age || c.age <= 0) {
+                                    childrenAreValid = false;
+                                }
+                            });
+                            return childrenAreValid;
+                        default: // text, number, date
+                            var input = document.getElementById(id);
+                            if (!input || !input.value) return false;
+                            answers[id] = input.value;
+                            break;
+                    }
+                    return true;
+                },
+
+                renderCurrentQuestion: function() {
+                    var visibleQuestions = this.getVisibleQuestions();
+                    var state = FinancialCheckupApp.state;
+                    var elements = FinancialCheckupApp.elements;
+
+                    if (state.currentQuestionIndex >= visibleQuestions.length) {
+                        elements.quizSection.innerHTML = '';
+                        elements.quizSection.classList.add('hidden');
+                        elements.completionScreen.classList.remove('hidden');
+                        return;
+                    }
+
+                    var question = visibleQuestions[state.currentQuestionIndex];
+                    var sections = this.getUniqueSections(visibleQuestions);
+                    var currentSectionName = question.section;
+                    var currentSectionIndex = sections.indexOf(currentSectionName) + 1;
+                    
+                    var inputHtml = this.renderers[question.type](question, state.userAnswers);
+
+                    var progressBarHtml = sections.map(function(sec, i) {
+                        var barClass = i < currentSectionIndex - 1 ? 'bg-green-500' : (i === currentSectionIndex - 1 ? 'brand-primary-bg' : 'bg-gray-200');
+                        return '<div class="w-full h-1.5 rounded-full ' + barClass + ' transition-all duration-500"></div>';
+                    }).join('');
+
+                    elements.quizSection.innerHTML =
+                        '<div class="animate-fade-in">' +
+                            '<h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-900">Check up Financiero</h1>' +
+                            '<div class="my-6">' +
+                                '<p class="text-center text-sm font-medium text-gray-600 mb-2">' + currentSectionName + ' (' + currentSectionIndex + ' de ' + sections.length + ')</p>' +
+                                '<div class="flex space-x-2">' + progressBarHtml + '</div>' +
+                            '</div>' +
+                            '<div id="question-container" class="mt-8">' +
+                                '<h2 class="text-xl font-semibold text-gray-800">' + question.text + '</h2>' +
+                                inputHtml +
+                            '</div>' +
+                            '<div class="mt-10 flex items-center justify-between">' +
+                                '<button id="back-btn" class="flex items-center space-x-2 text-gray-600 font-semibold hover:text-gray-900 transition-colors ' + (state.currentQuestionIndex === 0 ? 'invisible' : '') + '">' +
+                                    '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>' +
+                                    '<span>Atrás</span>' +
+                                '</button>' +
+                                '<button id="next-btn" class="brand-primary-bg text-white font-bold py-3 px-8 rounded-lg brand-primary-bg-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">Continuar</button>' +
+                            '</div>' +
+                        '</div>';
+                    
+                    this.attachEventListeners();
+                },
+                
+                getUniqueSections: function(questions) {
+                    var seen = {};
+                    var result = [];
+                    for (var i = 0; i < questions.length; i++) {
+                        var section = questions[i].section;
+                        if (!seen[section]) {
+                            seen[section] = true;
+                            result.push(section);
+                        }
+                    }
+                    return result;
+                },
+                
+                // --- RENDERER HELPERS ---
+                renderers: {
+                    text: function(q, data) { return '<input type="text" id="' + q.id + '" value="' + (data[q.id] || '') + '" placeholder="' + (q.placeholder || '') + '" class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm">'; },
+                    number: function(q, data) {
+                        var savedValue = data[q.id] || '';
+                        if (q.unit) {
+                            return '<div class="relative mt-4"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">' + q.unit + '</div><input type="number" id="' + q.id + '" value="' + savedValue + '" placeholder="' + q.placeholder + '" class="w-full p-3 ' + (q.unit === '$' ? 'pl-7' : 'pr-16') + ' border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm"><div class="absolute inset-y-0 right-4 flex items-center text-gray-500">' + (q.unit !== '$' ? q.unit : '') + '</div></div>';
+                        }
+                        return '<input type="number" id="' + q.id + '" value="' + savedValue + '" placeholder="' + q.placeholder + '" class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm">';
+                    },
+                    date: function(q, data) { return '<input type="date" id="' + q.id + '" value="' + (data[q.id] || '') + '" class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm">'; },
+                    radio: function(q, data) {
+                        var optionsHtml = '';
+                        for (var i = 0; i < q.options.length; i++) {
+                            var option = q.options[i];
+                            var checked = (data[q.id] || '') === option;
+                            optionsHtml += '<label for="' + q.id + '-' + option + '" class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-green-50/50 transition-colors duration-200 ' + (checked ? 'brand-primary-border ring-2 brand-primary-ring' : 'bg-white') + ' shadow-sm">' +
+                                '<input type="radio" id="' + q.id + '-' + option + '" name="' + q.id + '" value="' + option + '" ' + (checked ? 'checked' : '') + ' class="hidden">' +
+                                '<span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center mr-4 form-radio ' + (checked ? 'form-radio:checked' : '') + '"></span>' +
+                                '<span class="font-medium text-gray-800">' + option + '</span>' +
+                            '</label>';
+                        }
+                        return '<div class="mt-4 space-y-3">' + optionsHtml + '</div>';
+                    },
+                    checkbox: function(q, data) {
+                        var optionsHtml = '';
+                        for(var i = 0; i < q.options.length; i++) {
+                            var option = q.options[i];
+                            var checked = data.currentInsurances.indexOf(option.value) > -1;
+                            optionsHtml += '<label for="' + q.id + '-' + option.value + '" class="flex flex-col items-center justify-center text-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-green-50/50 transition-colors duration-200 ' + (checked ? 'brand-primary-border ring-2 brand-primary-ring' : 'bg-white') + ' shadow-sm">' +
+                                '<input type="checkbox" id="' + q.id + '-' + option.value + '" name="' + q.id + '" value="' + option.value + '" ' + (checked ? 'checked' : '') + ' class="hidden">' +
+                                '<span class="text-3xl mb-2">' + option.icon + '</span>' +
+                                '<span class="font-medium text-sm text-gray-800">' + option.label + '</span>' +
+                            '</label>';
+                        }
+                        return '<div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">' + optionsHtml + '</div>';
+                    },
+                    slider: function(q, data) {
+                        var val = data[q.id] || q.min;
+                        return '<div class="mt-8">' +
+                                '<div class="text-center mb-4">' +
+                                    '<span id="' + q.id + '-value" class="text-4xl font-bold brand-primary-text">' + val + q.unit + '</span>' +
+                                '</div>' +
+                                '<input type="range" id="' + q.id + '" min="' + q.min + '" max="' + q.max + '" step="' + q.step + '" value="' + val + '" class="w-full">' +
+                                '<div class="flex justify-between items-center mt-2 text-xs text-gray-500">' +
+                                    '<span>' + q.min + q.unit + '</span>' +
+                                    '<span>' + q.max + q.unit + '</span>' +
+                                '</div>' +
+                            '</div>';
+                    },
+                    children: function() {
+                        return '<div id="children-list" class="mt-4 space-y-4"></div>' +
+                                    '<button id="add-child-btn" class="mt-4 text-sm brand-primary-text font-semibold hover:text-green-800 transition-colors flex items-center space-x-2">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>' +
+                                        '<span>Agregar hijo</span>' +
+                                    '</button>';
+                    },
+                },
+                
+                attachEventListeners: function() {
+                    var question = this.getVisibleQuestions()[FinancialCheckupApp.state.currentQuestionIndex];
+                    if (!question) return;
+
+                    document.getElementById('next-btn').addEventListener('click', this.handleNext.bind(this));
+                    document.getElementById('back-btn').addEventListener('click', this.handleBack.bind(this));
+                    
+                    // --- Specific Listeners per Question Type ---
+                    switch(question.type) {
+                        case 'radio':
+                            document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(radio) {
+                                radio.addEventListener('change', function(e) {
+                                    FinancialCheckupApp.state.userAnswers[question.id] = e.target.value;
+                                    document.querySelectorAll('label[for^="' + question.id + '-"]').forEach(function(l) {
+                                        l.classList.remove('brand-primary-border', 'ring-2', 'brand-primary-ring');
+                                    });
+                                    document.querySelector('label[for="' + e.target.id + '"]').classList.add('brand-primary-border', 'ring-2', 'brand-primary-ring');
+                                });
+                            });
+                            break;
+                        case 'checkbox':
+                            document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(checkbox) {
+                                checkbox.addEventListener('change', function(e) {
+                                    var value = e.target.value;
+                                    var checked = e.target.checked;
+                                    var answers = FinancialCheckupApp.state.userAnswers.currentInsurances;
+                                    var tempAnswers = [];
+
+                                    if (value === 'Ninguno' && checked) {
+                                        tempAnswers = ['Ninguno'];
+                                        document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(cb) { if (cb.value !== 'Ninguno') cb.checked = false; });
+                                    } else {
+                                        // Filter out 'Ninguno' if another box is checked
+                                        for(var i=0; i<answers.length; i++) {
+                                            if(answers[i] !== 'Ninguno') tempAnswers.push(answers[i]);
+                                        }
+                                        var noneCheckbox = document.getElementById(question.id + '-Ninguno');
+                                        if(noneCheckbox) noneCheckbox.checked = false;
+
+                                        // Add or remove the current value
+                                        var index = tempAnswers.indexOf(value);
+                                        if (checked) {
+                                            if (index === -1) tempAnswers.push(value);
+                                        } else {
+                                            if (index > -1) tempAnswers.splice(index, 1);
+                                        }
+                                    }
+                                    FinancialCheckupApp.state.userAnswers.currentInsurances = tempAnswers;
+
+                                    document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(cb) {
+                                        var label = document.querySelector('label[for="' + cb.id + '"]');
+                                        var isChecked = cb.checked;
+                                        if (isChecked) {
+                                            label.classList.add('brand-primary-border', 'ring-2', 'brand-primary-ring');
+                                        } else {
+                                            label.classList.remove('brand-primary-border', 'ring-2', 'brand-primary-ring');
+                                        }
+                                    });
+                                });
+                            });
+                            break;
+                        case 'slider':
+                            var slider = document.getElementById(question.id);
+                            var valueDisplay = document.getElementById(question.id + '-value');
+                            slider.addEventListener('input', function() { valueDisplay.textContent = slider.value + question.unit; });
+                            break;
+                        case 'children':
+                            if (FinancialCheckupApp.state.userAnswers.childrenData.length === 0) {
+                                FinancialCheckupApp.state.userAnswers.childrenData.push({ gender: 'Hombre', age: '' });
+                            }
+                            this.renderChildren();
+                            document.getElementById('add-child-btn').addEventListener('click', function() {
+                                FinancialCheckupApp.state.userAnswers.childrenData.push({ gender: 'Hombre', age: '' });
+                                this.renderChildren();
+                            }.bind(this));
+                            break;
+                    }
+                },
+                
+                renderChildren: function() {
+                    var list = document.getElementById('children-list');
+                    if (!list) return;
+                    list.innerHTML = '';
+                    var childrenData = FinancialCheckupApp.state.userAnswers.childrenData;
+                    
+                    var self = this; // Store reference to `this` for use in nested functions
+                    childrenData.forEach(function(child, index) {
+                        var childDiv = document.createElement('div');
+                        childDiv.className = 'p-4 border border-gray-200 rounded-lg relative bg-gray-50/80 animate-fade-in';
+                        childDiv.innerHTML =
+                            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">' +
+                                '<div>' +
+                                    '<label class="block text-sm font-medium text-gray-700">Género (Hijo ' + (index + 1) + ')</label>' +
+                                    '<select data-index="' + index + '" data-field="gender" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 brand-primary-ring focus:border-transparent">' +
+                                        '<option value="Hombre" ' + (child.gender === 'Hombre' ? 'selected' : '') + '>Hombre</option>' +
+                                        '<option value="Mujer" ' + (child.gender === 'Mujer' ? 'selected' : '') + '>Mujer</option>' +
+                                    '</select>' +
+                                '</div>' +
+                                '<div>' +
+                                    '<label class="block text-sm font-medium text-gray-700">Edad</label>' +
+                                    '<input type="number" data-index="' + index + '" data-field="age" value="' + child.age + '" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 brand-primary-ring focus:border-transparent" placeholder="años">' +
+                                '</div>' +
+                            '</div>' +
+                            (childrenData.length > 1 ? '<button data-index="' + index + '" class="remove-child-btn absolute -top-2 -right-2 text-red-500 bg-white rounded-full w-6 h-6 flex items-center justify-center border shadow-sm hover:bg-red-50 hover:scale-110 transition-transform">&times;</button>' : '');
+
+                        list.appendChild(childDiv);
+                    });
+                    
+                    list.querySelectorAll('select, input').forEach(function(input) {
+                        input.addEventListener('change', function(e) {
+                            FinancialCheckupApp.state.userAnswers.childrenData[e.target.dataset.index][e.target.dataset.field] = e.target.value;
+                        });
+                    });
+                    list.querySelectorAll('.remove-child-btn').forEach(function(btn) {
+                        btn.addEventListener('click', function(e) {
+                            FinancialCheckupApp.state.userAnswers.childrenData.splice(e.target.dataset.index, 1);
+                            self.renderChildren(); // Use the stored reference
+                        });
+                    });
+                },
+
+            },
+
+            // =========================================================================
+            // ANALYSIS MODULE
+            // All logic related to calculating scores and rendering the final report
+            // is encapsulated here.
+            // =========================================================================
+            analysis: {
+                calculateResults: function(data) {
+                    var getIncomeAvg = function(incomeRange) {
+                        if (!incomeRange) return 0;
+                        var cleanStr = incomeRange.replace(/[^0-9-]/g, '');
+                        var numbers = cleanStr.split('-').map(function(n) { return parseInt(n, 10); });
+
+                        if (numbers.length > 1 && !isNaN(numbers[0]) && !isNaN(numbers[1])) {
+                             return (numbers[0] + numbers[1]) / 2;
+                        }
+                        
+                        var singleNumber = numbers[0] || 0;
+                        if(incomeRange.indexOf('o menos') > -1) return singleNumber;
+                        if(incomeRange.indexOf('o más') > -1) return singleNumber;
+
+                        return 0; // Default case
+                    };
+                    
+                    var getObjectValues = function(obj) {
+                        var values = [];
+                        for (var key in obj) {
+                            if (obj.hasOwnProperty(key)) {
+                                values.push(obj[key]);
+                            }
+                        }
+                        return values;
+                    };
+                    
+                    var getObjectEntries = function(obj) {
+                        var entries = [];
+                        for (var key in obj) {
+                            if (obj.hasOwnProperty(key)) {
+                                entries.push([key, obj[key]]);
+                            }
+                        }
+                        return entries;
+                    };
+
+                    var score = 0;
+                    var incomeAvg = getIncomeAvg(data.familyIncome);
+                    var recommendedSavings = incomeAvg * 0.20;
+                    var actualSavings = parseInt(data.monthlySavingsAmount || 0);
+
+                    var savingsRatio = recommendedSavings > 0 ? Math.min(actualSavings / recommendedSavings, 1) : 0;
+                    score += savingsRatio * 30;
+
+                    var debtRate = parseInt(data.percentageDebt || 0);
+                    if (debtRate <= 30) score += 20;
+                    else if (debtRate <= 50) score += 10;
+                    
+                    var emergencyFundAnswer = data.emergencyFund || 'No tengo un fondo';
+                    if (emergencyFundAnswer.indexOf('3 y 6') > -1) score += 20;
+                    else if (emergencyFundAnswer.indexOf('más de 6') > -1) score += 20;
+                    else if (emergencyFundAnswer.indexOf('1 y 3') > -1) score += 10;
+                    else if (emergencyFundAnswer.indexOf('menos de 1') > -1) score += 5;
+
+                    var protectionPoints = 0;
+                    var hasLife = data.currentInsurances.indexOf('Vida') > -1;
+                    var hasGMM = data.currentInsurances.indexOf('Gastos Médicos Mayores') > -1;
+                    if (data.hasChildren === 'Sí' && hasLife) protectionPoints += 12;
+                    if (data.medicalPreference === 'Hospital Privado' && hasGMM) protectionPoints += 12;
+                    if (data.hasHouse === 'Sí' && data.currentInsurances.indexOf('Hogar') > -1) protectionPoints += 6;
+                    score += (protectionPoints / 30) * 30;
+
+                    var finalScore = Math.round(Math.max(0, Math.min(100, score)));
+                    var status, statusColor;
+                    if (finalScore < 50) { status = 'Vulnerable'; statusColor = 'text-red-600'; }
+                    else if (finalScore < 80) { status = 'En Desarrollo'; statusColor = 'text-yellow-600'; }
+                    else { status = 'Sana'; statusColor = 'text-green-600'; }
+                    
+                    var priorities = { Vida: 20, GMM: 20, Retiro: 20, Hogar: 10, Auto: 5, Educación: 0 };
+                    if (data.hasChildren === 'Sí') { priorities.Vida += 25; priorities.GMM += 10; priorities.Educación += 20;}
+                    if (['Independiente', 'Negocio propio'].indexOf(data.occupation) > -1) { priorities.GMM += 15; priorities.Retiro += 10; }
+                    if (data.hasHouse === 'Sí') priorities.Hogar += 10;
+                    if (data.hasCar === 'Sí') priorities.Auto += 10;
+                    
+                    var totalPriority = getObjectValues(priorities).reduce(function(a, b) { return a + b; }, 0);
+                    for (var key in priorities) { if(priorities.hasOwnProperty(key)) priorities[key] = Math.round((priorities[key] / totalPriority) * 100); }
+                    
+                    var sortedPriorities = getObjectEntries(priorities).filter(function(entry) { return entry[1] > 0; }).sort(function(a, b) { return b[1] - a[1]; });
+                    
+                    var dataByRegion = { 'Norte': { consulta: 1200, urgencia: 8000, universidad: 850000 }, 'Centro': { consulta: 1000, urgencia: 7500, universidad: 690000 }, 'Sur': { consulta: 900, urgencia: 6500, universidad: 550000 } };
+                    var postalCodePrefix = (data.postalCode || '00000')[0];
+                    var region = 'Centro';
+                    var northPrefixes = ['8', '9', '2', '3'];
+                    var southPrefixes = ['7'];
+                    if (northPrefixes.indexOf(postalCodePrefix) > -1) region = 'Norte';
+                    if (southPrefixes.indexOf(postalCodePrefix) > -1) region = 'Sur';
+                    
+                    return { finalScore: finalScore, status: status, statusColor: statusColor, recommendedSavings: recommendedSavings, priorities: sortedPriorities, regionalData: dataByRegion[region] };
+                },
+
+                renderReport: function(data) {
+                    var results = this.calculateResults(data);
+                    FinancialCheckupApp.state.analysisResults = results;
+                    var finalScore = results.finalScore;
+                    var status = results.status;
+                    var statusColor = results.statusColor;
+                    var recommendedSavings = results.recommendedSavings;
+                    var priorities = results.priorities;
+                    var regionalData = results.regionalData;
+                    
+                    var actualSavings = parseInt(data.monthlySavingsAmount || 0);
+                    var savingsFeedback, savingsColor;
+                    if (actualSavings >= recommendedSavings) { savingsFeedback = '¡Excelente! Estás ahorrando por encima del 20% recomendado.'; savingsColor = 'text-green-600'; }
+                    else if (actualSavings > 0) { savingsFeedback = 'Vas por buen camino, pero puedes optimizar tu ahorro para alcanzar la meta recomendada.'; savingsColor = 'text-yellow-600'; }
+                    else { savingsFeedback = 'Área de oportunidad: Actualmente no estás construyendo un ahorro mensual.'; savingsColor = 'text-red-600'; }
+
+                    var consultationTopics = '';
+                    if (finalScore < 50) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🎯</div><span>Discutir un plan de acción para estabilizar tus finanzas.</span></li>';
+                    if (data.currentInsurances.indexOf('Vida') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">👨‍👩‍👧</div><span>Explorar cómo un seguro de vida puede proteger el futuro de tu familia.</span></li>';
+                    if (data.currentInsurances.indexOf('Gastos Médicos Mayores') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🏥</div><span>Revisar opciones de seguros de salud que se ajusten a tus necesidades.</span></li>';
+                    if (data.currentInsurances.indexOf('Retiro') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🏖️</div><span>Crear una estrategia para empezar a construir tu fondo para el retiro.</span></li>';
+                    if (data.hasChildren === 'Sí' && data.currentInsurances.indexOf('Educación') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🎓</div><span>Analizar planes de ahorro para garantizar la educación de tus hijos.</span></li>';
+
+                    var reportHtml =
+                        '<div id="report-content" class="bg-white p-4 sm:p-8 animate-fade-in">' +
+                            '<h1 class="text-3xl font-extrabold brand-primary-text">Reporte de Salud Financiera</h1>' +
+                            '<p class="text-sm text-gray-500">Análisis generado el ' + new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) + '</p>' +
+                            
+                            '<div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">' +
+                                '<div class="lg:col-span-1 bg-gray-50 p-6 rounded-2xl text-center flex flex-col justify-center">' +
+                                    '<h2 class="text-lg font-semibold text-gray-700">Tu Puntuación General:</h2>' +
+                                    '<p class="text-7xl font-extrabold brand-primary-text my-2">' + finalScore + '<span class="text-3xl text-gray-400 font-semibold">/100</span></p>' +
+                                    '<p class="font-semibold text-xl text-gray-800">Diagnóstico: Finanzas <span class="' + statusColor + '">' + status + '</span></p>' +
+                                '</div>' +
+                                '<div class="lg:col-span-2 bg-gray-50 p-6 rounded-2xl">' +
+                                    '<h2 class="text-2xl font-bold brand-primary-text mb-4">Prioridades de Protección</h2>' +
+                                    '<p class="text-sm text-gray-600 mb-4">Basado en tus respuestas, estas son las áreas más importantes a considerar para tu plan financiero:</p>' +
+                                    '<div class="h-64"><canvas id="prioritiesChart"></canvas></div>' +
+                                    '<p class="text-xs text-gray-500 mt-4 italic">' +
+                                        '<span class="font-bold">Nota:</span> Este porcentaje representa el peso que cada área tiene en tu plan ideal. Un porcentaje más alto indica un área que requiere tu atención prioritaria.' +
+                                    '</p>' +
+                                '</div>' +
+                            '</div>' +
+
+                            '<hr class="my-8 border-t border-gray-200">' +
+
+                            '<div class="grid grid-cols-1 md:grid-cols-2 gap-8">' +
+                                '<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">' +
+                                    '<h2 class="text-2xl font-bold brand-primary-text mb-4">Análisis de Ahorro</h2>' +
+                                    '<div class="space-y-4">' +
+                                        '<div class="bg-gray-50 p-4 rounded-lg">' +
+                                            '<p class="text-sm text-gray-600">Tu Ahorro Mensual:</p>' +
+                                            '<p class="text-3xl font-bold text-gray-800">$' + actualSavings.toLocaleString('es-MX') + '</p>' +
+                                        '</div>' +
+                                        '<div class="bg-gray-50 p-4 rounded-lg border-2 brand-primary-border border-dashed">' +
+                                            '<p class="text-sm text-gray-600">Ahorro Recomendado (20%):</p>' +
+                                            '<p class="text-3xl font-bold brand-primary-text">$' + Math.round(recommendedSavings).toLocaleString('es-MX') + '</p>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<p class="mt-4 text-sm font-medium ' + savingsColor + '">' + savingsFeedback + '</p>' +
+                                    '<p class="text-xs text-gray-400 mt-2">Fuente: Recomendación basada en directrices de la CONDUSEF.</p>' +
+                                '</div>' +
+                                '<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">' +
+                                    '<h2 class="text-2xl font-bold brand-primary-text mb-4">Temas para tu Asesoría</h2>' +
+                                    '<ul class="text-sm text-gray-700 space-y-3">' + consultationTopics + '</ul>' +
+                                '</div>' +
+                            '</div>' +
+                            
+                            '<hr class="my-8 border-t border-gray-200">' +
+
+                            '<div class="bg-gray-50 p-6 rounded-2xl">' +
+                                '<h2 class="text-2xl font-bold brand-primary-text mb-4 text-center">Riesgos y Costos en tu Zona (CP: ' + (data.postalCode || 'N/A') + ')</h2>' +
+                                '<p class="text-sm text-gray-600 text-center mb-6">Tener un seguro de Gastos Médicos Mayores te protege de costos imprevistos. Estos son algunos costos promedio en tu región:</p>' +
+                                '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">' +
+                                    '<div class="bg-white p-4 rounded-lg border">' +
+                                        '<p class="text-sm text-gray-600">Costo Promedio Consulta Especialista:</p>' +
+                                        '<p class="text-3xl font-bold text-gray-800">$' + regionalData.consulta.toLocaleString('es-MX') + '</p>' +
+                                    '</div>' +
+                                    '<div class="bg-white p-4 rounded-lg border">' +
+                                        '<p class="text-sm text-gray-600">Costo Promedio Noche de Hospital:</p>' +
+                                        '<p class="text-3xl font-bold text-gray-800">$' + regionalData.urgencia.toLocaleString('es-MX') + '</p>' +
+                                    '</div>' +
+                                '</div>' +
+                                (data.hasChildren === 'Sí' ? '<div class="bg-white p-4 rounded-lg mt-4 text-center border"><p class="text-sm text-gray-600">Costo Promedio Universidad Privada:</p><p class="text-3xl font-bold text-gray-800">$' + regionalData.universidad.toLocaleString('es-MX') + '</p></div>' : '') +
+                                '<p class="text-xs text-gray-400 mt-4 text-center">Fuente: Estimación basada en datos de la AMIS e INEGI.</p>' +
+                            '</div>' +
+
+                        '</div>' +
+                        '<div class="mt-8 text-center" id="report-footer">' +
+                            '<button id="download-pdf-btn" class="brand-primary-bg text-white font-bold py-3 px-8 rounded-lg brand-primary-bg-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">Descargar PDF</button>' +
+                            '<button id="send-email-btn" class="ml-4 bg-gray-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-colors shadow-md">Enviar Copia a Asesor</button>' +
+                            '<button id="restart-btn" class="mt-4 sm:mt-0 sm:ml-4 bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 transition-colors">Realizar otro Análisis</button>' +
+                        '</div>';
+
+                    FinancialCheckupApp.elements.analysisSection.innerHTML = reportHtml;
+                    
+                    document.getElementById('restart-btn').addEventListener('click', function() { FinancialCheckupApp.utils.handleRestart(); });
+                    document.getElementById('download-pdf-btn').addEventListener('click', function() { FinancialCheckupApp.pdf.download(); });
+                    document.getElementById('send-email-btn').addEventListener('click', function() { FinancialCheckupApp.backend.sendEmail(); });
+                    
+                    this.renderPrioritiesChart(priorities);
+                },
+                
+                renderPrioritiesChart: function(priorities) {
+                    var ctx = document.getElementById('prioritiesChart');
+                    if (!ctx) return;
+
+                    var labels = priorities.map(function(p) { return p[0]; });
+                    var data = priorities.map(function(p) { return p[1]; });
+
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Prioridad',
+                                data: data,
+                                backgroundColor: [
+                                    '#114a43', // brand-primary
+                                    '#1a6f64', // brand-primary-light
+                                    '#f59e0b', // brand-secondary
+                                    '#6b7280', // gray-500
+                                    '#d1d5db', // gray-300
+                                    '#fca5a5'  // red-300
+                                ],
+                                borderColor: '#f9fafb', // background color of chart container
+                                borderWidth: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '60%',
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        boxWidth: 20,
+                                        padding: 20,
+                                        font: {
+                                            size: 14,
+                                            family: "'Inter', sans-serif"
+                                        }
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return context.label + ': ' + context.raw + '%';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                },
+
+            },
+
+            // =========================================================================
+            // PDF MODULE
+            // =========================================================================
+            pdf: {
+                download: function() {
+                    var btn = document.getElementById('download-pdf-btn');
+                    var originalText = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = 'Generando...';
+
+                    var reportElement = document.getElementById('report-content');
+                    var footer = document.getElementById('report-footer');
+                    footer.classList.add('hidden'); // Hide buttons for the PDF capture
+
+                    // Wait a bit for chart animation to finish
+                    setTimeout(function() {
+                        html2canvas(reportElement, {
+                            scale: 2,
+                            backgroundColor: '#ffffff',
+                            useCORS: true
+                        }).then(function(canvas) {
+                            var imgData = canvas.toDataURL('image/png');
+                            var jspdf = window.jspdf;
+                            var pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+                            var pdfWidth = pdf.internal.pageSize.getWidth();
+                            var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                            
+                            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                            pdf.save('Reporte_CheckUp_Financiero.pdf');
+
+                            // Restore UI
+                            footer.classList.remove('hidden');
+                            btn.disabled = false;
+                            btn.innerHTML = originalText;
+                        })['catch'](function(err) {
+                            console.error("PDF generation failed:", err);
+                            // Restore UI on error
+                            footer.classList.remove('hidden');
+                            btn.disabled = false;
+                            btn.innerHTML = 'Error. Reintentar';
+                        });
+                    }, 500);
+                }
+            },
+
+            // =========================================================================
+            // BACKEND MODULE
+            // =========================================================================
+            backend: {
+                sendEmail: function() {
+                    var btn = document.getElementById('send-email-btn');
+                    if (btn.disabled) return;
+
+                    btn.disabled = true;
+                    btn.innerHTML = 'Enviando...';
+                    
+                    var payload = {
+                        userAnswers: FinancialCheckupApp.state.userAnswers,
+                        analysisResults: FinancialCheckupApp.state.analysisResults,
+                        questions: FinancialCheckupApp.questions
+                    };
+                    
+                    // DEVMAESTRO CRITICAL CHANGE: The user's Google Apps Script URL has been integrated.
+                    var googleWebAppUrl = 'https://script.google.com/macros/s/AKfycbzcrKcMuUOSUZds3VR2kbvmKdsUuSh3PlMsS26s5AtKYlGh0aY2iOK2Oy6NO35sv_nROw/exec'; 
+
+                    fetch(googleWebAppUrl, {
+                        method: 'POST',
+                        // DEVMAESTRO NOTE: Google Apps Script requires a different way to send data.
+                        // We wrap our JSON in a way it can understand.
+                        body: JSON.stringify(payload),
+                        headers: {
+                          'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                    })
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.status === 'success') {
+                            console.log('Success:', data);
+                            btn.innerHTML = 'Enviado ✓';
+                            btn.classList.remove('bg-gray-800', 'hover:bg-black');
+                            btn.classList.add('bg-green-600');
+                        } else {
+                            throw new Error(data.message || 'Unknown error from Google Apps Script');
+                        }
+                    })
+                    ['catch'](function(error) {
+                        console.error('Error:', error);
+                        btn.innerHTML = 'Error. Reintentar';
+                        btn.disabled = false;
+                    });
+                }
+            },
+
+            // =========================================================================
+            // UTILITIES MODULE
+            // =========================================================================
+            utils: {
+                handleRestart: function() {
+                    // Reset state
+                    FinancialCheckupApp.state.currentQuestionIndex = 0;
+                    FinancialCheckupApp.state.userAnswers = {
+                        childrenData: [],
+                        currentInsurances: []
+                    };
+                    FinancialCheckupApp.state.analysisResults = null;
+
+                    // Reset UI
+                    FinancialCheckupApp.elements.analysisSection.classList.add('hidden');
+                    FinancialCheckupApp.elements.quizSection.classList.remove('hidden');
+                    FinancialCheckupApp.elements.completionScreen.classList.add('hidden');
+                    FinancialCheckupApp.elements.analysisSection.innerHTML = ''; // Clear old report
+
+                    // Re-render the first question
+                    FinancialCheckupApp.quiz.renderCurrentQuestion();
+                }
+            }
+
+        };
+
+        // --- KICK-OFF THE APPLICATION ---
+        FinancialCheckupApp.init();
+
+    });
     </script>
 </body>
 </html>
+
