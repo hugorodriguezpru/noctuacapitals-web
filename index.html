@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noctua Capital - Asesor de Retiro</title>
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --color-primary: #114a43; /* Green from user's code */
@@ -36,6 +44,7 @@
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             transition: background-color 0.3s;
+            cursor: pointer;
         }
         .btn-primary:hover {
             background-color: var(--color-primary-dark);
@@ -50,7 +59,7 @@
         .form-input:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(17, 74, 67, 0.2); /* Adjusted to green */
+            box-shadow: 0 0 0 3px rgba(17, 74, 67, 0.2);
         }
         .results-hidden {
             max-height: 0;
@@ -60,7 +69,7 @@
             transform: translateY(-20px);
         }
         .results-visible {
-            max-height: 8000px; /* Large enough value */
+            max-height: 8000px;
             opacity: 1;
             transform: translateY(0);
             transition: max-height 1.2s ease-in, opacity 0.7s ease-out, transform 0.7s ease-in;
@@ -90,20 +99,17 @@
                    <text x="0" y="30" font-family="Inter, sans-serif" font-size="28" font-weight="500" fill="white">Noctua Capital</text>
                 </svg>
             </a>
-            <!-- Desktop Menu -->
             <ul class="hidden md:flex items-center space-x-8 text-white">
                 <li><a href="#" class="hover:text-gray-300 transition-colors">Contacto</a></li>
                 <li><a href="checkup.html" class="hover:text-gray-300 transition-colors">CHECK-UP financiero</a></li>
                 <li><a href="#" class="font-semibold border-b-2 border-white">Calculadoras</a></li>
             </ul>
-            <!-- Mobile Menu Button (Hamburger) -->
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-white focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
             </div>
         </nav>
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-[--color-primary-dark]">
             <ul class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-white">
                  <li><a href="#" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">Contacto</a></li>
@@ -130,36 +136,45 @@
                     </div>
                     <div>
                         <label for="current-age" class="block text-sm font-medium text-gray-700 mb-1">Edad Actual</label>
-                        <input type="number" id="current-age" class="form-input" placeholder="Ej: 30">
+                        <input type="number" id="current-age" class="form-input" placeholder="Ej: 30" value="30">
                     </div>
                     <div>
                         <label for="retirement-age" class="block text-sm font-medium text-gray-700 mb-1">Edad de Retiro</label>
-                        <input type="number" id="retirement-age" class="form-input" placeholder="Ej: 65">
+                        <input type="number" id="retirement-age" class="form-input" placeholder="Ej: 65" value="65">
                     </div>
                      <div>
                         <label for="lifespan" class="block text-sm font-medium text-gray-700 mb-1">Esperanza de Vida</label>
-                        <input type="number" id="lifespan" class="form-input" placeholder="Ej: 90">
+                        <input type="number" id="lifespan" class="form-input" placeholder="Ej: 90" value="90">
                     </div>
                     <div>
                         <label for="monthly-retirement-income" class="block text-sm font-medium text-gray-700 mb-1">Ingreso Mensual Deseado</label>
-                        <input type="number" id="monthly-retirement-income" class="form-input" placeholder="Ej: 30000">
+                        <input type="number" id="monthly-retirement-income" class="form-input" placeholder="Ej: 30000" value="30000">
                     </div>
                     <div>
                         <label for="monthly-salary" class="block text-sm font-medium text-gray-700 mb-1">Salario Mensual Bruto</label>
-                        <input type="number" id="monthly-salary" class="form-input" placeholder="Ej: 50000">
+                        <input type="number" id="monthly-salary" class="form-input" placeholder="Ej: 50000" value="50000">
                     </div>
                     <div class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label for="inflation-rate" class="block text-sm font-medium text-gray-700 mb-1">Inflación Anual Proyectada (%)</label>
-                            <input type="number" id="inflation-rate" class="form-input" value="4.5" step="0.1">
+                            <select id="inflation-rate" class="form-input bg-white">
+                                <option value="4.0" selected>4.0%</option>
+                                <option value="4.5">4.5%</option>
+                                <option value="5.0">5.0%</option>
+                                <option value="6.0">6.0%</option>
+                            </select>
                         </div>
                         <div>
                             <label for="interest-rate" class="block text-sm font-medium text-gray-700 mb-1">Rendimiento Anual Proyectado (%)</label>
-                            <input type="number" id="interest-rate" class="form-input" value="8.0" step="0.1">
+                            <select id="interest-rate" class="form-input bg-white">
+                                <option value="6.0">Estabilidad (6%)</option>
+                                <option value="7.6" selected>Estratégico (7.6%)</option>
+                                <option value="9.6">Acciones USA (9.6%)</option>
+                            </select>
                         </div>
                     </div>
                     <div class="md:col-span-2 lg:col-span-3">
-                        <button type="submit" class="btn-primary w-full">
+                        <button type="submit" class="btn-primary w-full text-lg">
                             Generar Proyección Financiera
                         </button>
                     </div>
@@ -186,47 +201,138 @@
 
                     <!-- Investment vs. Saving -->
                     <div class="card p-6 border-l-4" style="border-color: var(--color-success);">
-                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">2. El Vehículo Importa: Invertir vs. "Guardar en el Colchón"</h2>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">El Vehículo Importa: Invertir vs. "Guardar en el Colchón"</h2>
                         <div id="investmentAnalysis" class="grid md:grid-cols-3 gap-6 text-center"></div>
                     </div>
                     
                     <!-- Cost of Waiting -->
                     <div class="card p-6 border-l-4" style="border-color: var(--color-danger);">
-                         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">3. El Tiempo es Dinero: El Costo de Esperar</h2>
+                         <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">El Tiempo es Dinero: El Costo de Esperar</h2>
                          <div id="costAnalysis" class="grid md:grid-cols-3 gap-6 text-center"></div>
                     </div>
 
                     <!-- Life Timeline -->
                     <div class="card p-6">
-                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">4. Visualiza tu Trayectoria</h2>
-                         <div id="lifeGrid" class="grid grid-cols-10 gap-3 my-6"></div>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Visualiza tu Trayectoria</h2>
+                         <div id="lifeGrid" class="grid grid-cols-10 gap-2 sm:gap-3 my-6"></div>
                          <div class="flex justify-center flex-wrap gap-6 text-sm">
                             <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full past"></div><span>Años Vividos</span></div>
                             <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full investment"></div><span>Años para Construir</span></div>
                             <div class="flex items-center gap-2"><div class="w-5 h-5 rounded-full retirement"></div><span>Años de Retiro</span></div>
                         </div>
                     </div>
-                    
-                    <!-- Growth Projections -->
-                    <div class="card p-6">
-                         <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Proyección de Crecimiento Anual</h3>
-                         <p class="text-sm text-gray-600 mb-4">Esta tabla simula cómo crecerá tu capital año con año aplicando tu ahorro mensual a diferentes instrumentos.</p>
-                         <div id="projection-table-container" class="mt-4 overflow-x-auto"></div>
-                    </div>
-                    
-                    <!-- Historical Chart -->
-                    <div class="card p-6">
-                        <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Comportamiento Histórico de Inversiones en México</h3>
-                        <p class="text-sm text-gray-600 mb-4">Rendimiento anual de CETES, S&P 500 e Inflación (UDI) desde 1990.</p>
-                        <div class="h-80"><canvas id="historical-chart"></canvas></div>
-                    </div>
 
                     <!-- Tax Info -->
                     <div class="card p-6">
-                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">5. Beneficio Adicional: Eficiencia Fiscal</h2>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Beneficio Adicional: Eficiencia Fiscal</h2>
                         <div class="flex flex-col gap-6 text-left">
                             <div><h3 class="text-lg font-semibold text-gray-700">ISR sobre tu Salario</h3><p class="text-gray-600 mt-2">Con un salario mensual de <strong id="salary-info-val"></strong>, tu ingreso anual es de <strong id="annual-salary-val"></strong>. Perteneces a la tasa marginal de ISR del <strong id="isr-rate-val" class="text-red-500"></strong>.</p></div>
                             <div><h3 class="text-lg font-semibold text-gray-700">Beneficio de un Plan de Retiro (PPR)</h3><p class="text-gray-600 mt-2">Puedes deducir de impuestos hasta <strong id="deductible-amount" class="text-green-600"></strong> anualmente. Al aportar <strong id="annual-savings-val"></strong> a tu plan, podrías recibir una devolución de impuestos de aprox. <strong id="tax-return-val" class="text-green-600 font-bold"></strong>.</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Skandia Advanced Projection Section -->
+                    <div class="card p-6 border-t-4" style="border-color: var(--color-primary);">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Proyección Detallada: Plan Skandia Crea Futuro</h2>
+                                <p class="text-sm text-gray-600 mt-1">Aplicando tu ahorro recomendado a un plan estructurado con beneficios adicionales y seguro de vida.</p>
+                            </div>
+                            <button onclick="generatePDF()" class="btn-primary flex items-center justify-center gap-2 whitespace-nowrap w-full md:w-auto">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Descargar PDF
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                            <p id="sumaAseguradaDisplay" class="text-lg font-medium text-gray-800">
+                                Suma Asegurada Inicial (Seguro de Vida e Invalidez): <span style="color: var(--color-primary); font-weight: bold; font-size: 1.25rem;"></span>
+                            </p>
+                        </div>
+
+                        <div class="overflow-x-auto mb-8 rounded-lg border border-gray-200">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm border-collapse">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Año</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Edad</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aportación Anual</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fondo Acumulado</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Bono Fidelidad Total</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Seguro Vida/Invalidez</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Valor de Rescate</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="skandiaResultsTable" class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+
+                        <h3 class="text-xl font-semibold mb-4 text-gray-800">Crecimiento de la Inversión</h3>
+                        <div class="h-[400px] w-full mb-8"><canvas id="skandiaChart"></canvas></div>
+
+                        <!-- Disclaimers from Skandia -->
+                        <div class="text-gray-500 text-xs space-y-2 mt-8 border-t pt-4">
+                            <p>- La tasa de crecimiento del fondo debe de ser considerada como un ejemplo, y por tanto no se puede garantizar como un desempeño futuro.</p>
+                            <p>- Esta es una herramienta exclusivamente didáctica, desarrollada para el producto Crea Futuro de Skandia Life S.A. de C.V., Las proyecciones se realizan bajo el supuesto de tasas de interés que han sido propuestas a partir de la observación de las rentabilidades históricas de cierto tipo de activos en el tiempo, que en ningún caso son garantía de futuros resultados.</p>
+                            <p>- La tasa de inflación sugerida representa el histórico de la Inflación Mexicana.</p>
+                            <p>- La suma asegurada es un monto variable que dependerá del Objetivo de Inversión e irá disminuyendo de manera anual en el monto equivalente a las aportaciones anuales comprometidas, hasta una suma asegurada mínima de $1,000 pesos. La Suma Asegurada podrá variar de acuerdo a las políticas de suscripción del seguro de vida y se establecerá en la póliza.</p>
+                            <p>- Costo del Producto: Será un costo anual igual al porcentaje asignado de la Suma Asegurada Inicial, según el plazo contratado: De 5 a 10 años 0.18%, de 11 a 15 años 0.20%, de 16 a 20 años 0.22%, de 21 a 25 años 0.23%, más 7.5 UMA al año, hasta el plazo contratado. Una vez finalizado el plazo contratado el costo bajará a 1 UMA al año, hasta que el cliente decida retirar el 100% del capital. La UMA será la vigente al cumplimiento de cada aniversario. El portafolio de inversión tiene un costo por manejo de hasta 0.125% mensual. Todos los costos se encuentran descontados en la proyección, los valores mostrados son netos.</p>
+                        </div>
+                    </div>
+
+                    <!-- Alternative Scenario Section -->
+                    <div class="card p-6 border-t-4" style="border-color: var(--color-accent-gold);">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">¿Quieres ver otro escenario?</h2>
+                        <p class="text-sm text-gray-600 mb-4">Ingresa una cantidad diferente para comparar cómo se vería tu fondo y seguro de vida con otra aportación mensual.</p>
+                        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                            <div class="flex-grow">
+                                <label for="alt-monthly-contribution" class="block text-sm font-medium text-gray-700 mb-1">Nueva Aportación Mensual (MXN)</label>
+                                <input type="number" id="alt-monthly-contribution" class="form-input" placeholder="Ej: 10000">
+                            </div>
+                            <div class="flex items-end">
+                                <button id="btn-calc-alt" type="button" class="btn-primary w-full sm:w-auto" style="background-color: var(--color-accent-gold);">
+                                    Calcular Escenario Alternativo
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Alternative Results Section -->
+                        <div id="alt-results-section" class="hidden mt-8 pt-6 border-t">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                                <div>
+                                    <h3 class="text-lg sm:text-xl font-semibold text-gray-800">Proyección Alternativa</h3>
+                                </div>
+                                <button onclick="generateAltPDF()" class="btn-primary flex items-center justify-center gap-2 whitespace-nowrap w-full md:w-auto" style="background-color: var(--color-accent-gold);">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Descargar PDF Alternativo
+                                </button>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg mb-6 border border-yellow-200">
+                                <p id="alt-sumaAseguradaDisplay" class="text-lg font-medium text-gray-800">
+                                    Suma Asegurada Inicial (Alternativa): <span style="color: var(--color-accent-gold); font-weight: bold; font-size: 1.25rem;"></span>
+                                </p>
+                            </div>
+
+                            <div class="overflow-x-auto mb-8 rounded-lg border border-gray-200">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm border-collapse">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Año</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Edad</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aportación Anual</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fondo Acumulado</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Bono Fidelidad Total</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Seguro Vida/Invalidez</th>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Valor de Rescate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="altSkandiaResultsTable" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+
+                            <h3 class="text-xl font-semibold mb-4 text-gray-800">Crecimiento Inversión (Alternativo)</h3>
+                            <div class="h-[400px] w-full mb-8"><canvas id="altSkandiaChart"></canvas></div>
                         </div>
                     </div>
 
@@ -242,17 +348,39 @@
         </div>
     </footer>
 
-
     <script>
         // --- CONFIGURATION & DATA ---
         const UMA_ANUAL_2024 = 39646.8;
         const MAX_DEDUCTIBLE_UMAS = 5 * UMA_ANUAL_2024;
-        const ISR_BRACKETS_2024 = [ { lower: 0.01, upper: 8952.49, fixed: 0.00, percent: 0.0192 }, { lower: 8952.50, upper: 75984.55, fixed: 171.88, percent: 0.0640 }, { lower: 75984.56, upper: 133536.07, fixed: 4461.94, percent: 0.1088 }, { lower: 133536.08, upper: 155229.80, fixed: 10723.53, percent: 0.1600 }, { lower: 155229.81, upper: 185852.57, fixed: 14194.54, percent: 0.1792 }, { lower: 185852.58, upper: 374837.88, fixed: 19682.14, percent: 0.2136 }, { lower: 374837.89, upper: 590795.04, fixed: 60048.07, percent: 0.2352 }, { lower: 590795.05, upper: 1127939.65, fixed: 111003.88, percent: 0.3000 }, { lower: 1127939.66, upper: 1503919.53, fixed: 272147.27, percent: 0.3200 }, { lower: 1503919.54, upper: 4511758.59, fixed: 392459.81, percent: 0.3400 }, { lower: 4511758.60, upper: Infinity, fixed: 1415125.09, percent: 0.3500 } ];
-        const HISTORICAL_DATA = { years: [1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024], cetes: [26.8, 17.6, 16.8, 13.9, 13.7, 49.0, 31.3, 19.8, 24.6, 21.3, 15.3, 11.3, 7.1, 6.2, 6.8, 9.2, 7.1, 7.5, 7.8, 4.5, 4.4, 4.2, 4.3, 3.8, 2.9, 3.0, 5.2, 7.1, 7.6, 7.3, 4.5, 6.5, 9.7, 11.3, 11.0], sp500: [-3.1, 30.5, 7.6, 10.1, 1.3, 37.6, 23.0, 33.4, 28.6, 21.0, -9.1, -11.9, -22.1, 28.7, 10.9, 4.9, 15.8, 5.5, -37.0, 26.5, 15.1, 2.1, 16.0, 32.4, 13.7, 1.4, 12.0, 21.8, -4.4, 31.5, 18.4, 28.7, -18.1, 26.3, 15.1], inflation: [29.9, 18.8, 11.9, 8.0, 7.1, 52.0, 27.7, 15.7, 18.6, 12.3, 9.0, 4.4, 5.7, 4.0, 5.2, 3.3, 4.1, 3.8, 6.5, 3.6, 4.4, 3.8, 3.6, 4.0, 4.1, 2.1, 3.4, 6.8, 4.8, 2.8, 3.2, 7.4, 7.8, 4.7, 4.4] };
+        const ISR_BRACKETS_2024 = [
+            { lower: 0.01, upper: 8952.49, fixed: 0.00, percent: 0.0192 },
+            { lower: 8952.50, upper: 75984.55, fixed: 171.88, percent: 0.0640 },
+            { lower: 75984.56, upper: 133536.07, fixed: 4461.94, percent: 0.1088 },
+            { lower: 133536.08, upper: 155229.80, fixed: 10723.53, percent: 0.1600 },
+            { lower: 155229.81, upper: 185852.57, fixed: 14194.54, percent: 0.1792 },
+            { lower: 185852.58, upper: 374837.88, fixed: 19682.14, percent: 0.2136 },
+            { lower: 374837.89, upper: 590795.04, fixed: 60048.07, percent: 0.2352 },
+            { lower: 590795.05, upper: 1127939.65, fixed: 111003.88, percent: 0.3000 },
+            { lower: 1127939.66, upper: 1503919.53, fixed: 272147.27, percent: 0.3200 },
+            { lower: 1503919.54, upper: 4511758.59, fixed: 392459.81, percent: 0.3400 },
+            { lower: 4511758.60, upper: Infinity, fixed: 1415125.09, percent: 0.3500 }
+        ];
 
         const form = document.getElementById('retirement-form');
         const resultsSection = document.getElementById('results-section');
-        let historicalChart = null;
+        
+        let skandiaChartInstance = null;
+        let altSkandiaChartInstance = null;
+        
+        // Globals for PDF Generation
+        let globalCurrentResults = [];
+        let globalInputs = null;
+        let globalSumaAsegurada = 0;
+
+        // Globals for Alternative PDF Generation
+        let globalAltCurrentResults = [];
+        let globalAltSumaAsegurada = 0;
+        let globalAltContribution = 0;
 
         const formatCurrency = (value) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
 
@@ -268,7 +396,40 @@
                 e.preventDefault();
                 handleCalculation();
             });
+
+            document.getElementById('btn-calc-alt').addEventListener('click', () => {
+                handleAltCalculation();
+            });
         });
+
+        // --- SKANDIA LOGIC: Valor de Rescate ---
+        function getRescatePercentage(year, planDuration) {
+            if (year === 1) return 0.10;
+            if (year === 2) return 0.25;
+            if (year === 3) return 0.35;
+            if (year === 4) return 0.45;
+            if (year === 5) return planDuration === 5 ? 1.00 : 0.55;
+            if (year === 6) return planDuration === 6 ? 1.00 : 0.65;
+            if (year === 7) return planDuration === 7 ? 1.00 : 0.75;
+            if (year === 8) return planDuration === 8 ? 1.00 : 0.85;
+            if (year === 9) return planDuration === 9 ? 1.00 : 0.95;
+            if (year === 10) return planDuration === 10 ? 1.00 : 0.95;
+            if (year === 11) return planDuration === 11 ? 1.00 : 0.95;
+            if (year === 12) return planDuration === 12 ? 1.00 : 0.95;
+            if (year === 13) return planDuration === 13 ? 1.00 : 0.95;
+            if (year === 14) return planDuration === 14 ? 1.00 : 0.95;
+            if (year === 15) return planDuration === 15 ? 1.00 : 0.95;
+            if (year === 16) return planDuration === 16 ? 1.00 : 0.95;
+            if (year === 17) return planDuration === 17 ? 1.00 : 0.99;
+            if (year === 18) return planDuration === 18 ? 1.00 : 0.99;
+            if (year === 19) return planDuration === 19 ? 1.00 : 0.99;
+            if (year === 20) return planDuration === 20 ? 1.00 : 0.99;
+            if (year === 21) return planDuration === 21 ? 1.00 : 0.99;
+            if (year === 22) return planDuration === 22 ? 1.00 : 0.99;
+            if (year === 23) return planDuration === 23 ? 1.00 : 0.99;
+            if (year === 24) return planDuration === 24 ? 1.00 : 0.99;
+            return 1.00; // Year 25+ is 100% for all plans
+        }
 
         // --- Main Calculation Handler ---
         function handleCalculation() {
@@ -295,25 +456,60 @@
             const totalSavingsGoal = inflatedMonthlyIncome * 12 * retirementYears;
             
             const monthlySavingsWithInvestment = calculateMonthlySavings(totalSavingsGoal, inputs.interestRate, yearsToInvest);
+            
+            // Save globals for PDF
+            globalInputs = { ...inputs, recommendedSavings: monthlySavingsWithInvestment };
+
+            // Hide alternative section on new calculation
+            document.getElementById('alt-results-section').classList.add('hidden');
+            document.getElementById('alt-monthly-contribution').value = '';
 
             // 4. RENDER UI
             resultsSection.classList.remove('results-hidden');
             resultsSection.classList.add('results-visible');
 
             renderMainSummary(inputs.name, totalSavingsGoal, monthlySavingsWithInvestment);
+            
+            // Skandia Integration
+            const skandiaData = calculateSkandiaData(inputs, monthlySavingsWithInvestment);
+            globalCurrentResults = skandiaData.results;
+            globalSumaAsegurada = skandiaData.initialSumaAsegurada;
+
+            renderSkandiaUI(globalCurrentResults, globalSumaAsegurada, 'sumaAseguradaDisplay', 'skandiaResultsTable', 'skandiaChart', false);
+
             renderInvestmentComparison(totalSavingsGoal, inputs.interestRate, yearsToInvest);
             renderCostOfWaiting(totalSavingsGoal, inputs.interestRate, yearsToInvest);
             renderLifeGrid(inputs.lifespan, inputs.currentAge, inputs.retirementAge);
-            renderProjections(monthlySavingsWithInvestment, yearsToInvest, inputs.inflationRate);
             renderTaxInfo(inputs.monthlySalary, monthlySavingsWithInvestment);
-            
-            if (!historicalChart) createHistoricalChart();
             
             if (window.innerWidth < 1024) {
                 resultsSection.scrollIntoView({ behavior: 'smooth' });
             }
         }
         
+        function handleAltCalculation() {
+            if (!globalInputs) {
+                alert("Primero genera la proyección principal para definir las edades y metas.");
+                return;
+            }
+            const altInput = document.getElementById('alt-monthly-contribution').value;
+            const altContribution = parseFloat(altInput);
+            
+            if (isNaN(altContribution) || altContribution <= 0) {
+                alert("Por favor, ingresa una cantidad de aportación válida.");
+                return;
+            }
+
+            globalAltContribution = altContribution;
+            const altSkandiaData = calculateSkandiaData(globalInputs, altContribution);
+            globalAltCurrentResults = altSkandiaData.results;
+            globalAltSumaAsegurada = altSkandiaData.initialSumaAsegurada;
+
+            document.getElementById('alt-results-section').classList.remove('hidden');
+            
+            renderSkandiaUI(globalAltCurrentResults, globalAltSumaAsegurada, 'alt-sumaAseguradaDisplay', 'altSkandiaResultsTable', 'altSkandiaChart', true);
+        }
+
         // --- Calculation & Validation Helpers ---
         function validateInputs(values) {
             for (const key in values) {
@@ -342,22 +538,71 @@
             const denominator = Math.pow(1 + monthlyRate, numberOfMonths) - 1;
             return denominator === 0 ? Infinity : numerator / denominator;
         }
-        
-        function runProjection(monthlyContribution, years, avgAnnualReturn, inflationRate, useVolatility = false) {
-             let history = [];
-             let totalValue = 0;
-             let currentContribution = monthlyContribution;
-             for (let year = 0; year < years; year++) {
-                 let annualContribution = currentContribution * 12;
-                 let annualReturn = avgAnnualReturn;
-                 if (useVolatility) {
-                     annualReturn = (Math.random() < 0.22) ? - (Math.random() * 0.15 + 0.10) : (Math.random() * 0.24 + 0.04);
-                 }
-                 totalValue = (totalValue + annualContribution) * (1 + annualReturn);
-                 history.push({ value: totalValue, annualReturn: annualReturn });
-                 currentContribution *= (1 + inflationRate);
-             }
-             return history;
+
+        function calculateSkandiaData(inputs, monthlyContribution) {
+            const startAge = inputs.currentAge;
+            const contributionYears = inputs.retirementAge - inputs.currentAge;
+            const totalYears = contributionYears; 
+            const portfolioReturn = inputs.interestRate / 100;
+            const applyInflation = true;
+            const inflationRate = inputs.inflationRate / 100;
+
+            const annualCost = 0.015; 
+            const monthlyCost = annualCost / 12; 
+            const bonusAnnualCost = 0.01; 
+            const monthlyBonusCost = bonusAnnualCost / 12; 
+            const bonusReturn = 0.05;
+            const monthlyBonusReturn = bonusReturn / 12;
+            const fixedMonthlyCost = 500;
+
+            let sumaAsegurada = Math.min((monthlyContribution * 12 * Math.min(contributionYears, 25)) * 1.15, 2000000);
+            const initialSumaAsegurada = sumaAsegurada;
+
+            let results = [];
+            let fundValue = 0;
+            let bonus1Balance = 0; 
+            let bonus2Balance = 0; 
+            let cumulativeContributions = 0; 
+
+            for (let year = 1; year <= totalYears; year++) {
+                const adjustedMonthlyContribution = year <= contributionYears 
+                    ? (applyInflation ? monthlyContribution * Math.pow(1 + inflationRate, year - 1) : monthlyContribution)
+                    : 0;
+                const annualContribution = adjustedMonthlyContribution * 12;
+                cumulativeContributions += annualContribution;
+
+                for (let month = 1; month <= 12; month++) {
+                    const actualFixedCost = fundValue > fixedMonthlyCost ? fixedMonthlyCost : fundValue;
+                    fundValue = (fundValue + adjustedMonthlyContribution - actualFixedCost) * (1 + portfolioReturn / 12) - (fundValue * monthlyCost);
+                    fundValue = Math.max(0, fundValue); 
+                    bonus1Balance = bonus1Balance * (1 + monthlyBonusReturn) - (bonus1Balance * monthlyBonusCost);
+                    bonus1Balance = Math.max(0, bonus1Balance); 
+                    bonus2Balance = bonus2Balance * (1 + monthlyBonusReturn) - (bonus2Balance * monthlyBonusCost);
+                    bonus2Balance = Math.max(0, bonus2Balance); 
+                }
+
+                const loyaltyBonus1 = (year >= 11 && year <= 25 && year <= contributionYears) 
+                    ? (applyInflation ? adjustedMonthlyContribution : monthlyContribution / 2) : 0;
+                const loyaltyBonus2 = (year >= 25 || (year > contributionYears && contributionYears < 25)) ? fundValue * 0.01 : 0;
+                
+                bonus1Balance += loyaltyBonus1;
+                bonus2Balance += loyaltyBonus2;
+                fundValue += loyaltyBonus1 + loyaltyBonus2;
+
+                if (year <= contributionYears) {
+                    sumaAsegurada = Math.max(0, sumaAsegurada - annualContribution);
+                }
+                const indemnizacion = sumaAsegurada + fundValue;
+                const rescatePercentage = getRescatePercentage(Math.min(year, contributionYears), contributionYears);
+                const valorRescate = fundValue * rescatePercentage;
+
+                results.push({
+                    year, age: startAge + year, annualContribution, cumulativeContributions,
+                    fundValue, loyaltyBonus: bonus1Balance + bonus2Balance, 
+                    indemnizacion, valorRescate
+                });
+            }
+            return { results, initialSumaAsegurada };
         }
 
         // --- RENDER FUNCTIONS ---
@@ -367,6 +612,213 @@
             document.getElementById('monthly-savings-summary').textContent = formatCurrency(monthlySavings);
         }
 
+        function renderLifeGrid(lifespan, currentAge, retirementAge) {
+            const grid = document.getElementById('lifeGrid');
+            grid.innerHTML = '';
+            for (let year = 1; year <= lifespan; year++) {
+                const circle = document.createElement('div');
+                circle.classList.add('year-circle');
+                if (year <= currentAge) circle.classList.add('past');
+                else if (year > retirementAge) circle.classList.add('retirement');
+                else circle.classList.add('investment');
+                circle.textContent = year;
+                grid.appendChild(circle);
+            }
+        }
+
+        function renderSkandiaUI(results, initialSumaAsegurada, displayId, tableId, chartId, isAlt = false) {
+            const displayEl = document.getElementById(displayId);
+            if(displayEl) displayEl.querySelector('span').textContent = formatCurrency(initialSumaAsegurada);
+
+            const color = isAlt ? '#ca8a04' : '#114a43';
+
+            const tableBody = document.getElementById(tableId);
+            tableBody.innerHTML = results.map((row, index) => {
+                const bgClass = index % 2 === 0 ? 'bg-white' : (isAlt ? 'bg-yellow-50/50' : 'bg-gray-50');
+                const hoverClass = isAlt ? 'hover:bg-yellow-100' : 'hover:bg-green-50';
+                return `
+                <tr class="${bgClass} ${hoverClass} transition-colors">
+                    <td class="px-4 py-3 border-b text-gray-900">${row.year}</td>
+                    <td class="px-4 py-3 border-b text-gray-900">${row.age}</td>
+                    <td class="px-4 py-3 border-b text-gray-600">${formatCurrency(row.annualContribution)}</td>
+                    <td class="px-4 py-3 border-b font-semibold" style="color: ${color};">${formatCurrency(row.fundValue)}</td>
+                    <td class="px-4 py-3 border-b text-gray-600">${formatCurrency(row.loyaltyBonus)}</td>
+                    <td class="px-4 py-3 border-b text-gray-600">${formatCurrency(row.indemnizacion)}</td>
+                    <td class="px-4 py-3 border-b text-gray-600">${formatCurrency(row.valorRescate)}</td>
+                </tr>
+            `}).join('');
+
+            const ctx = document.getElementById(chartId).getContext('2d');
+            
+            if (isAlt && altSkandiaChartInstance) altSkandiaChartInstance.destroy();
+            if (!isAlt && skandiaChartInstance) skandiaChartInstance.destroy();
+            
+            const newChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: results.map(row => `Año ${row.year}`),
+                    datasets: [{
+                        label: 'Valor del Fondo',
+                        data: results.map(row => row.fundValue),
+                        borderColor: color,
+                        backgroundColor: color + '1a', 
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: color
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            ticks: { callback: v => '$' + v.toLocaleString('es-MX') } 
+                        }
+                    },
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { label: c => `Fondo: ${formatCurrency(c.raw)}` } 
+                        } 
+                    }
+                }
+            });
+
+            if (isAlt) altSkandiaChartInstance = newChart;
+            else skandiaChartInstance = newChart;
+        }
+
+        // --- PDF Generation ---
+        function generatePDF() {
+            try {
+                if (!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas) {
+                    throw new Error('Las librerías de PDF no están cargadas');
+                }
+                if (!globalCurrentResults.length) {
+                    throw new Error('No hay datos calculados');
+                }
+                generatePDFDoc(globalInputs, globalCurrentResults, globalSumaAsegurada, globalInputs.recommendedSavings, 'skandiaChart', false);
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al generar el PDF. Verifica la consola.');
+            }
+        }
+
+        function generateAltPDF() {
+            try {
+                if (!window.jspdf || !window.jspdf.jsPDF || !window.html2canvas) {
+                    throw new Error('Las librerías de PDF no están cargadas');
+                }
+                if (!globalAltCurrentResults.length) {
+                    throw new Error('No hay datos calculados alternativos');
+                }
+                generatePDFDoc(globalInputs, globalAltCurrentResults, globalAltSumaAsegurada, globalAltContribution, 'altSkandiaChart', true);
+            } catch (error) {
+                console.error(error);
+                alert('Hubo un error al generar el PDF alternativo. Verifica la consola.');
+            }
+        }
+
+        function generatePDFDoc(inputs, results, sumaAsegurada, monthlyContribution, chartId, isAlt = false) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            
+            const clientName = inputs.name;
+            const startAge = inputs.currentAge;
+            const portfolioReturn = inputs.interestRate;
+            const inflationRate = inputs.inflationRate;
+
+            const portfolioNames = {
+                6.0: 'Estabilidad (6%)',
+                7.6: 'Estratégico (7.6%)',
+                9.6: 'Acciones USA (9.6%)'
+            };
+
+            let headColor = isAlt ? [202, 138, 4] : [17, 74, 67];
+
+            doc.setFontSize(18);
+            if(isAlt) doc.setTextColor(202, 138, 4);
+            else doc.setTextColor(17, 74, 67);
+            
+            doc.text('Noctua Capital - Plan Skandia Crea Futuro' + (isAlt ? ' (Alternativo)' : ''), 105, 20, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.setTextColor(50, 50, 50);
+            doc.text('Resumen de la Proyección', 20, 30);
+            doc.setFontSize(10);
+            doc.text(`Cliente: ${clientName}`, 20, 40);
+            doc.text(`Aportación Mensual: ${formatCurrency(monthlyContribution)}`, 20, 46);
+            doc.text(`Edad de inicio: ${startAge} años | Edad de Retiro: ${inputs.retirementAge} años`, 20, 52);
+            doc.text(`Portafolio: ${portfolioNames[portfolioReturn]} | Inflación Proyectada: ${inflationRate}%`, 20, 58);
+            doc.text(`Suma Asegurada Inicial: ${formatCurrency(sumaAsegurada)}`, 20, 64);
+
+            doc.autoTable({
+                startY: 70,
+                head: [['Año', 'Edad', 'Aportación Anual', 'Fondo Acumulado', 'Bono Fidelidad', 'Seguro de Vida', 'Valor de Rescate']],
+                body: results.map(row => [
+                    row.year,
+                    row.age,
+                    formatCurrency(row.annualContribution),
+                    formatCurrency(row.fundValue),
+                    formatCurrency(row.loyaltyBonus),
+                    formatCurrency(row.indemnizacion),
+                    formatCurrency(row.valorRescate)
+                ]),
+                styles: { fontSize: 7, cellPadding: 2 },
+                headStyles: { fillColor: headColor, textColor: [255, 255, 255], fontStyle: 'bold' }, 
+                columnStyles: {
+                    0: { cellWidth: 10 }, 1: { cellWidth: 10 },
+                    2: { cellWidth: 25 }, 3: { cellWidth: 25 },
+                    4: { cellWidth: 25 }, 5: { cellWidth: 25 },
+                    6: { cellWidth: 25 }
+                }
+            });
+
+            const canvas = document.getElementById(chartId);
+            html2canvas(canvas).then(canvasImg => {
+                const imgData = canvasImg.toDataURL('image/png');
+                const imgProps = doc.getImageProperties(imgData);
+                const pdfWidth = doc.internal.pageSize.getWidth() - 40;
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                let finalY = doc.lastAutoTable.finalY + 10;
+                
+                if (finalY + pdfHeight > 270) {
+                    doc.addPage();
+                    finalY = 20;
+                }
+
+                doc.setFontSize(12);
+                if(isAlt) doc.setTextColor(202, 138, 4);
+                else doc.setTextColor(17, 74, 67);
+                
+                doc.text('Crecimiento de la Inversión', 20, finalY);
+                doc.addImage(imgData, 'PNG', 20, finalY + 5, pdfWidth, pdfHeight);
+
+                let currentY = finalY + pdfHeight + 15;
+                doc.setFontSize(8);
+                doc.setTextColor(100, 100, 100);
+                
+                const legends = [
+                    'La tasa de crecimiento del fondo es un ejemplo y no se puede garantizar como desempeño futuro.',
+                    'Herramienta didáctica. Proyecciones realizadas bajo supuestos históricos de tasas de interés.',
+                    'Suma asegurada variable, disminuye anualmente equivalente a aportaciones comprometidas hasta mínimo de $1,000.',
+                    'Los costos de producto (seguro y administración) están descontados en la proyección; los valores son netos.'
+                ];
+                
+                legends.forEach(legend => {
+                    const lines = doc.splitTextToSize('- ' + legend, 170);
+                    doc.text(lines, 20, currentY);
+                    currentY += lines.length * 4;
+                });
+
+                const fileName = `Proyeccion_Noctua_Skandia_${isAlt ? 'Alt_' : ''}${clientName.replace(/\s+/g, '_')}.pdf`;
+                doc.save(fileName);
+            });
+        }
+
+        // --- Other UI Renderings ---
         function renderInvestmentComparison(savingsGoal, interestRate, yearsToInvest) {
             const container = document.getElementById('investmentAnalysis');
             const savingsWith = calculateMonthlySavings(savingsGoal, interestRate, yearsToInvest);
@@ -414,58 +866,6 @@
                 </div>
             `;
         }
-
-        function renderLifeGrid(lifespan, currentAge, retirementAge) {
-            const grid = document.getElementById('lifeGrid');
-            grid.innerHTML = '';
-            for (let year = 1; year <= lifespan; year++) {
-                const circle = document.createElement('div');
-                circle.classList.add('year-circle');
-                if (year <= currentAge) circle.classList.add('past');
-                else if (year > retirementAge) circle.classList.add('retirement');
-                else circle.classList.add('investment');
-                circle.textContent = year;
-                grid.appendChild(circle);
-            }
-        }
-        
-        function renderProjections(monthlySavings, yearsToSave, inflationRate) {
-            const inflation = inflationRate / 100;
-            const CETES_RETURN = 0.05; 
-            const SP500_RETURN = 0.10;
-
-            const savingsProj = runProjection(monthlySavings, yearsToSave, 0, inflation);
-            const cetesProj = runProjection(monthlySavings, yearsToSave, CETES_RETURN, inflation);
-            const sp500Proj = runProjection(monthlySavings, yearsToSave, SP500_RETURN, inflation, true);
-
-            createProjectionTable(yearsToSave, savingsProj, cetesProj, sp500Proj);
-        }
-        
-        function createProjectionTable(years, savingsData, cetesData, sp500Data) {
-            const container = document.getElementById('projection-table-container');
-            let tableHTML = `<table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50"><tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Año</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Solo Ahorro</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">CETES (Sim)</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">S&P 500 (Sim)</th>
-                </tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
-            for (let i = 0; i < years; i++) {
-                const sp500YearData = sp500Data[i];
-                const colorClass = sp500YearData.annualReturn < 0 ? 'text-red-500' : 'text-green-600';
-                tableHTML += `<tr>
-                    <td class="px-4 py-3 font-medium text-gray-900">${i + 1}</td>
-                    <td class="px-4 py-3 text-gray-600">${formatCurrency(savingsData[i].value)}</td>
-                    <td class="px-4 py-3 text-gray-600">${formatCurrency(cetesData[i].value)}</td>
-                    <td class="px-4 py-3">
-                        <div class="font-semibold ${colorClass}">${formatCurrency(sp500YearData.value)}</div>
-                        <div class="text-xs font-normal ${colorClass}">${(sp500YearData.annualReturn * 100).toFixed(1)}%</div>
-                    </td>
-                </tr>`;
-            }
-            tableHTML += `</tbody></table>`;
-            container.innerHTML = tableHTML;
-        }
         
         function renderTaxInfo(monthlySalary, monthlySavings) {
              const annualSalary = monthlySalary * 12;
@@ -482,33 +882,7 @@
              document.getElementById('annual-savings-val').textContent = formatCurrency(annualSavings);
              document.getElementById('tax-return-val').textContent = formatCurrency(taxReturn);
         }
-
-        function createHistoricalChart() {
-            const ctx = document.getElementById('historical-chart').getContext('2d');
-            if (historicalChart) { historicalChart.destroy(); }
-            historicalChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: HISTORICAL_DATA.years,
-                    datasets: [{
-                        label: 'S&P 500', data: HISTORICAL_DATA.sp500,
-                        borderColor: 'var(--color-accent-gold)', backgroundColor: 'rgba(202, 138, 4, 0.1)',
-                    }, {
-                        label: 'CETES 28 días', data: HISTORICAL_DATA.cetes,
-                        borderColor: 'var(--color-primary)', backgroundColor: 'rgba(17, 74, 67, 0.1)',
-                    }, {
-                        label: 'Inflación (UDI)', data: HISTORICAL_DATA.inflation,
-                        borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { ticks: { callback: value => value + '%' } } },
-                    plugins: { tooltip: { callbacks: { label: context => `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%` } } }
-                }
-            });
-        }
     </script>
+    
 </body>
 </html>
-
