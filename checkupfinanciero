@@ -3,944 +3,1214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noctua Capital - CHECK-UP Financiero</title>
-    <!-- Dependencies -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    
-    <!-- Fonts -->
+    <title>Check-up Financiero | Noctua Capital</title>
+    <!-- Tipografía Premium -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Custom Styles & Branding -->
     <style>
         :root {
-            --color-primary: #114a43;
-            --color-primary-dark: #0c3b36;
-            --brand-primary: #114a43;
-            --brand-primary-dark: #0c352e;
-            --brand-primary-light: #1a6f64;
-            --brand-secondary: #f59e0b; /* Amber 500 for highlights */
+            /* Paleta Premium Noctua Capital */
+            --primary-dark: #0a2d28; /* Fondo oscuro y contrastes fuertes */
+            --primary-main: #114a43; /* Color base institucional */
+            --primary-light: #1b6e63; /* Variante clara para hovers */
+            --primary-very-light: #e6f0ef; /* Fondo suave para selecciones */
+            --completed-green: #10B981;
+            --danger-red: #EF4444;
+            --bg-page: #F3F4F6;
+            --surface: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
         }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Tailwind's gray-50 */
-            padding-top: 68px; /* Offset for fixed header */
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #E2E8F0 0%, #F8FAFC 100%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .brand-primary-bg { background-color: var(--brand-primary); }
-        .brand-primary-text { color: var(--brand-primary); }
-        .brand-primary-ring { ring-color: var(--brand-primary); }
-        .brand-primary-border { border-color: var(--brand-primary); }
-        .brand-primary-bg-hover:hover { background-color: var(--brand-primary-dark); }
-        .brand-secondary-text { color: var(--brand-secondary); }
-        .brand-secondary-border { border-color: var(--brand-secondary); }
-        .brand-secondary-bg { background-color: var(--brand-secondary); }
-        
-        .form-radio:checked {
-            background-color: var(--brand-primary);
-            border-color: var(--brand-primary);
-        }
-        .form-radio:checked:after {
-            content: '';
-            display: block;
-            width: 8px;
-            height: 8px;
-            margin: 2px;
-            border-radius: 50%;
-            background: white;
-        }
-        
-        input[type=range] {
-            -webkit-appearance: none;
-            appearance: none;
+
+        .app-container {
             width: 100%;
-            height: 8px;
-            background: #e5e7eb; /* gray-200 */
-            border-radius: 9999px;
+            max-width: 900px;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-bottom: 80px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Pantalla de Inicio y Final */
+        .hero-screen {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--primary-dark);
+            color: white;
+            position: relative;
+        }
+        
+        .hero-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at top right, rgba(27, 110, 99, 0.2), transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-screen h2 {
+            color: #FFFFFF;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-screen p {
+            color: #D1D5DB;
+            line-height: 1.8;
+            font-size: 16px;
+            font-weight: 300;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Cabecera del formulario */
+        .form-header {
+            text-align: center;
+            padding: 30px 20px 10px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-counter {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-light);
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 0 0 25px 0;
+        }
+
+        /* Indicador de Progreso (Puntos) */
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 8px;
+        }
+
+        .dot-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45px;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid #D1D5DB;
+            background: var(--surface);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .dot.completed {
+            border-color: var(--primary-dark);
+            background: var(--primary-dark);
+        }
+
+        .dot.current {
+            border-color: var(--primary-main);
+            background: var(--surface);
+            box-shadow: inset 0 0 0 3px var(--primary-main);
+        }
+
+        .dot-line {
+            height: 2px;
+            width: 100%;
+            background-color: #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .dot-container.completed .dot-line { background-color: var(--primary-dark); }
+        .dot-container.current .dot-line { background-color: var(--primary-main); }
+
+        /* Contenedores de pasos */
+        .step {
+            display: none;
+            padding: 40px 30px;
+            animation: fadeIn 0.4s ease;
+        }
+        .step.active { display: block; }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-dark);
+        }
+
+        /* Inputs y Cajas de opción */
+        .form-group {
+            max-width: 550px;
+            margin: 0 auto 25px auto;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input[type="text"], input[type="number"], input[type="date"], select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-main);
+            background-color: #F9FAFB;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
             outline: none;
-            transition: background-color 0.2s;
+            border-color: var(--primary-main);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 3px rgba(17, 74, 67, 0.1);
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            background: var(--brand-primary);
+
+        .option-box {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 12px;
             cursor: pointer;
-            border-radius: 50%;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            transition: all 0.2s ease;
+            background: var(--surface);
+            font-weight: 500;
         }
-        input[type=range]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            background: var(--brand-primary);
-            cursor: pointer;
+
+        .option-box:hover { 
+            border-color: var(--primary-light); 
+            background: var(--primary-very-light);
+            transform: translateY(-1px);
+        }
+
+        .option-box.selected { 
+            border-color: var(--primary-main);
+            background: var(--primary-very-light);
+            box-shadow: 0 4px 6px -1px rgba(17, 74, 67, 0.1);
+        }
+
+        .custom-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #D1D5DB;
             border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-box:hover .custom-radio { border-color: var(--primary-light); }
+
+        .option-box.selected .custom-radio {
+            border-color: var(--primary-main);
+        }
+
+        .option-box.selected .custom-radio::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--primary-main);
+            border-radius: 50%;
+        }
+        
+        .option-box input[type="radio"], .option-box input[type="checkbox"] {
+            display: none;
+        }
+
+        /* Tarjetas de Seguros (S10) */
+        .insurance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .ins-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--surface);
+            transition: all 0.3s ease;
+        }
+        
+        .ins-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .ins-card-header {
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-dark);
+            font-size: 15px;
+            cursor: pointer;
+        }
+        
+        .ins-card input[type="number"] {
+            margin-top: 6px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        /* Barra Inferior Porcentajes (S8) */
+        .percentage-bar {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: none;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+            z-index: 100;
+            transition: background-color 0.3s;
+        }
+
+        /* Botones de Navegación */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 20px 0;
+            max-width: 550px;
+            margin: 20px auto 0 auto;
+            border-top: 1px solid var(--border-color);
+        }
+
+        button {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
             border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary { 
+            background-color: var(--primary-main); 
+            color: white; 
+            box-shadow: 0 4px 6px rgba(17, 74, 67, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(17, 74, 67, 0.3);
+        }
+        
+        .btn-text { 
+            background: transparent; 
+            color: var(--primary-main); 
+            font-weight: 600;
+        }
+        .btn-text:hover { color: var(--primary-light); text-decoration: underline; }
+        
+        .btn-back { 
+            background: #F3F4F6; 
+            color: var(--text-muted); 
+        }
+        .btn-back:hover {
+            background: #E5E7EB;
+            color: var(--text-main);
+        }
+        
+        .hidden { display: none !important; }
+
+        /* Range Slider */
+        .slider-container {
+            text-align: center;
+            margin: 40px 0;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--primary-main);
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        /* ================= RESULTADOS DASHBOARD ================= */
+        .dashboard {
+            padding: 40px;
+            background: var(--bg-page);
+            color: var(--text-main);
+            text-align: left;
+        }
+        .dash-header {
+            text-align: center;
+            color: var(--primary-dark);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        @media(max-width: 768px) { 
+            .dash-grid { grid-template-columns: 1fr; } 
+            .step { padding: 30px 15px; }
+            .hero-screen { padding: 40px 20px; }
+        }
+        
+        .dash-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .dash-card-dark {
+            background: var(--primary-dark);
+            color: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .speedometer-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0 10px;
+        }
+        
+        .speedometer {
+            width: 240px;
+            height: 120px;
+            background: conic-gradient(from 270deg at 50% 100%, #EF4444 0%, #F59E0B 50%, #10B981 100%);
+            border-radius: 120px 120px 0 0;
+            position: relative;
+            margin-bottom: 25px;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.2);
+        }
+        .speedometer::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 160px; height: 80px;
+            background: var(--primary-dark);
+            border-radius: 80px 80px 0 0;
+        }
+        .speedometer-needle {
+            width: 6px;
+            height: 105px;
+            background: var(--surface);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(0deg); 
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .speedometer-needle::after {
+            content: '';
+            position: absolute;
+            bottom: -6px; left: -6px;
+            width: 18px; height: 18px;
+            background: var(--primary-main);
+            border-radius: 50%;
+        }
+
+        .badge-status {
+            background: var(--primary-main);
+            color: white;
+            padding: 10px 40px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 1px;
+            margin-top: -40px;
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 10px 15px -3px rgba(17, 74, 67, 0.3);
+        }
+
+        .stat-circle-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .circle-progress {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-main) 0%, #F3F4F6 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+        .circle-inner {
+            width: 64px;
+            height: 64px;
+            background: var(--surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary-dark);
+        }
+
+        .bar-row { margin-bottom: 20px; }
+        .bar-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .bar-track {
+            height: 12px;
+            background: #F3F4F6;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .bar-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
+        .bg-red { background: linear-gradient(90deg, #EF4444, #DC2626); }
+        .bg-dark { background: linear-gradient(90deg, var(--primary-light), var(--primary-dark)); }
+        .bg-green { background: linear-gradient(90deg, #10B981, #059669); }
+        .bg-orange { background: linear-gradient(90deg, #F59E0B, #D97706); }
+
+        .recommendation-list { list-style: none; padding: 0; margin: 0; }
+        .recommendation-list li {
+            margin-bottom: 20px;
+            padding-left: 35px;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #374151;
+        }
+        .recommendation-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--primary-main);
+            font-weight: bold;
+            font-size: 16px;
+            border: 2px solid var(--primary-main);
+            border-radius: 50%;
+            width: 22px; height: 22px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--primary-very-light);
+        }
+        .recommendation-list b { color: var(--primary-dark); }
+
+        .insurance-summary {
+            background: #F9FAFB;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+        }
+        .insurance-summary b { color: var(--primary-dark); }
+        .insurance-summary span { color: var(--text-muted); font-size: 13px; font-weight: 600; background: white; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color);}
+
+        .people-icons {
+            display: flex;
+            gap: 6px;
+            margin: 20px 0;
+            font-size: 28px;
+        }
+        .person-active { color: var(--primary-main); }
+        .person-gray { color: #E5E7EB; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="antialiased text-gray-800">
-    <!-- Header / Navigation -->
-    <header class="bg-[--color-primary-dark] shadow-md fixed top-0 left-0 right-0 z-50">
-        <nav class="container mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-            <a href="asesor_retiro_digital.html" class="flex items-center">
-                 <svg viewBox="0 0 200 40" class="h-8 w-auto" xmlns="http://www.w3.org/2000/svg">
-                   <text x="0" y="30" font-family="Inter, sans-serif" font-size="28" font-weight="500" fill="white">Noctua Capital</text>
-                </svg>
-            </a>
-            <!-- Desktop Menu -->
-            <ul class="hidden md:flex items-center space-x-8 text-white">
-                <li><a href="#" class="hover:text-gray-300 transition-colors">Contacto</a></li>
-                <li><a href="#" class="font-semibold border-b-2 border-white">CHECK-UP financiero</a></li>
-                <li><a href="asesor_retiro_digital.html" class="hover:text-gray-300 transition-colors">Calculadoras</a></li>
-            </ul>
-            <!-- Mobile Menu Button (Hamburger) -->
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-white focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
-            </div>
-        </nav>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-[--color-primary-dark]">
-            <ul class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-white">
-                 <li><a href="#" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">Contacto</a></li>
-                 <li><a href="#" class="block px-3 py-2 rounded-md bg-[--color-primary] font-semibold">CHECK-UP financiero</a></li>
-                 <li><a href="asesor_retiro_digital.html" class="block px-3 py-2 rounded-md hover:bg-[--color-primary]">Calculadoras</a></li>
-            </ul>
-        </div>
-    </header>
+<body>
 
-    <main class="container mx-auto p-4 sm:p-6">
-        <div id="financial-checkup-container" class="w-full max-w-5xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200">
+<div class="app-container">
+
+    <!-- PANTALLA DE INICIO -->
+    <div id="intro" class="hero-screen">
+        <h2>Check-up Financiero</h2>
+        <p>¿Te gustaría conocer tu situación financiera actual y recibir consejos personalizados para mejorarla? Esta evaluación te ayudará a analizar diversos aspectos de tus finanzas, desde tu presupuesto hasta tus hábitos de ahorro e inversión, brindándote claridad para la toma de decisiones.</p>
+        <button class="btn-primary" style="font-size: 18px; padding: 16px 40px;" onclick="startTest()">Iniciar Evaluación</button>
+    </div>
+
+    <!-- CABECERA DINÁMICA -->
+    <div id="form-header" class="form-header hidden">
+        <div class="section-counter" id="lbl-seccion">1 de 11 secciones</div>
+        <h2 class="section-title" id="lbl-titulo">Información particular</h2>
+        <div class="progress-dots" id="dots-container"></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 1: Información Particular ==================== -->
+    <div id="step-1" class="step">
+        <div class="question-title">¿Cuál es tu fecha de nacimiento?</div>
+        <div class="form-group"><input type="date" id="q_fecha_nac"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="goToStep(0)">Atrás</button><button class="btn-primary" onclick="nextQuestion(2)">Continuar</button></div>
+    </div>
+
+    <div id="step-2" class="step">
+        <div class="question-title">¿Cuál es el código postal de tu domicilio actual?</div>
+        <div class="form-group"><input type="text" id="q_cp" placeholder="Escribe aquí"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(1)">Atrás</button><button class="btn-primary" onclick="nextQuestion(3)">Continuar</button></div>
+    </div>
+
+    <div id="step-3" class="step">
+        <div class="question-title">¿Con qué género te identificas?</div>
+        <div class="form-group" id="opts_genero"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(2)">Atrás</button><button class="btn-primary" onclick="nextQuestion(4)">Continuar</button></div>
+    </div>
+
+    <div id="step-4" class="step">
+        <div class="question-title">¿Cuál es el nivel más alto de estudios que has completado?</div>
+        <div class="form-group" id="opts_estudios"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(3)">Atrás</button><button class="btn-primary" onclick="nextQuestion(5)">Continuar</button></div>
+    </div>
+
+    <div id="step-5" class="step">
+        <div class="question-title">¿Cuál es tu ocupación actual?</div>
+        <div class="form-group" id="opts_ocupacion"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(4)">Atrás</button><button class="btn-primary" onclick="nextQuestion(6)">Continuar</button></div>
+    </div>
+
+    <div id="step-6" class="step">
+        <div class="question-title">¿Cuántos años de experiencia laboral tienes?</div>
+        <div class="form-group"><input type="number" id="q_exp" placeholder="Escribe aquí (años)"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(5)">Atrás</button><button class="btn-primary" onclick="nextQuestion(7)">Continuar</button></div>
+    </div>
+
+    <div id="step-7" class="step">
+        <div class="question-title">¿Cuál es tu estado civil actual?</div>
+        <div class="form-group" id="opts_edocivil"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(6)">Atrás</button><button class="btn-primary" onclick="evalStep7()">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 2: Datos de Cónyuge ==================== -->
+    <div id="step-8" class="step" data-section="2">
+        <div class="question-title">¿Cuál es el género de tu pareja?</div>
+        <div class="form-group" id="opts_genero_pareja"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(7)">Atrás</button><button class="btn-primary" onclick="nextQuestion(9)">Continuar</button></div>
+    </div>
+
+    <div id="step-9" class="step" data-section="2">
+        <div class="question-title">¿Qué edad tiene tu pareja?</div>
+        <div class="form-group"><input type="number" id="q_edad_pareja" placeholder="Escribe aquí (años)"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(8)">Atrás</button><button class="btn-primary" onclick="nextQuestion(10)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 3: Datos de Hijos ==================== -->
+    <div id="step-10" class="step" data-section="3">
+        <div class="question-title">¿Tienes hijos?</div>
+        <div class="form-group" id="opts_tiene_hijos"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="backFromStep10()">Atrás</button><button class="btn-primary" onclick="evalStep10()">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 4: Datos de tus Hijos ==================== -->
+    <div id="step-11" class="step" data-section="4">
+        <div class="question-title">Retomar información de los niños</div>
+        <div id="hijos_container" style="max-width: 550px; margin: 0 auto;"></div>
+        <div style="text-align: center; margin-top: 15px;">
+            <button class="btn-text" onclick="agregarHijo()">+ Agregar datos de otro hijo</button>
+        </div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(10)">Atrás</button><button class="btn-primary" onclick="nextQuestion(12)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 5: Dependientes ==================== -->
+    <div id="step-12" class="step" data-section="5">
+        <div class="question-title">¿Tienes otros dependientes económicos (sin considerar cónyuge e hijos)?</div>
+        <div class="form-group" id="opts_dependientes"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="backFromStep12()">Atrás</button><button class="btn-primary" onclick="nextQuestion(13)">Continuar</button></div>
+    </div>
+
+    <div id="step-13" class="step" data-section="5">
+        <div class="question-title">Actualmente, ¿qué es lo más importante para ti?</div>
+        <div class="form-group"><input type="text" id="q_importante" placeholder="Escribe aquí"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(12)">Atrás</button><button class="btn-primary" onclick="nextQuestion(14)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 6: Mascotas y bienes ==================== -->
+    <div id="step-14" class="step" data-section="6">
+        <div class="question-title">¿Tienes mascotas en tu hogar (perro/gato)?</div>
+        <div class="form-group" id="opts_mascotas"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(13)">Atrás</button><button class="btn-primary" onclick="nextQuestion(15)">Continuar</button></div>
+    </div>
+
+    <div id="step-15" class="step" data-section="6">
+        <div class="question-title">¿Tienes automóvil?</div>
+        <div class="form-group" id="opts_auto"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(14)">Atrás</button><button class="btn-primary" onclick="nextQuestion(16)">Continuar</button></div>
+    </div>
+
+    <div id="step-16" class="step" data-section="6">
+        <div class="question-title">¿Tienes casa y/o departamento propio?</div>
+        <div class="form-group" id="opts_casa"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(15)">Atrás</button><button class="btn-primary" onclick="nextQuestion(17)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 7: Hábitos financieros 1 ==================== -->
+    <div id="step-17" class="step" data-section="7">
+        <div class="question-title" style="font-size:15px; max-width: 600px; margin: 0 auto 30px;">Selecciona el rango mensual aproximado en el que se encuentran los ingresos familiares en tu hogar</div>
+        <div class="form-group" id="opts_ingresos"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(16)">Atrás</button><button class="btn-primary" onclick="nextQuestion(18)">Continuar</button></div>
+    </div>
+
+    <div id="step-18" class="step" data-section="7">
+        <div class="question-title">¿Con qué porcentaje del total de ingresos familiares contribuyes?</div>
+        <div class="slider-container">
+            <div style="color:var(--primary-main); font-weight:700; font-size:24px; margin-bottom: 15px;" id="lbl-slider">0 %</div>
+            <input type="range" id="q_porcentaje_ingreso" min="0" max="100" value="0" oninput="document.getElementById('lbl-slider').innerText = this.value + ' %'">
+        </div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(17)">Atrás</button><button class="btn-primary" onclick="nextQuestion(19)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 8: Hábitos financieros 2 (100%) ==================== -->
+    <div id="step-19" class="step" data-section="8">
+        <div class="question-title">¿Qué porcentaje de tu ingreso mensual destinas para cubrir los siguientes aspectos?</div>
+        
+        <div class="form-group"><label>Gastos (hogar)</label><input type="number" id="pct_gastos" class="pct-input" value="0"></div>
+        <div class="form-group"><label>Deudas</label><input type="number" id="pct_deudas" class="pct-input" value="0"></div>
+        <div class="form-group"><label>Ahorro</label><input type="number" id="pct_ahorro" class="pct-input" value="0"></div>
+        <div class="form-group"><label>Esparcimiento</label><input type="number" id="pct_esparcimiento" class="pct-input" value="0"></div>
+        <div class="form-group"><label>Seguros</label><input type="number" id="pct_seguros" class="pct-input" value="0"></div>
+
+        <div class="nav-buttons" style="margin-bottom: 60px;">
+            <button class="btn-back" onclick="nextQuestion(18)">Atrás</button>
+            <button class="btn-primary" onclick="validar100(20)">Continuar</button>
+        </div>
+    </div>
+
+    <!-- ==================== SECCIÓN 9: Hábitos financieros 3 ==================== -->
+    <div id="step-20" class="step" data-section="9">
+        <div class="question-title">Aproximadamente, ¿Cuánto tiempo llevas ahorrando? (años)</div>
+        <div class="form-group"><input type="number" id="q_tiempo_ahorro" placeholder="Escribe aquí (años)"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(19)">Atrás</button><button class="btn-primary" onclick="nextQuestion(21)">Continuar</button></div>
+    </div>
+
+    <div id="step-21" class="step" data-section="9">
+        <div class="question-title">¿Cuál es el objetivo de tu ahorro?</div>
+        <div class="form-group" id="opts_objetivo_ahorro"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(20)">Atrás</button><button class="btn-primary" onclick="nextQuestion(22)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 10: Hábitos de protección ==================== -->
+    <div id="step-22" class="step" data-section="10">
+        <div class="question-title" style="text-align: center; max-width: 600px; margin: 0 auto 30px;">¿Qué seguros tienes contratados por tu cuenta?</div>
+        
+        <div class="insurance-grid">
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_auto">🚗 Auto</label><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_auto" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_hogar">🏠 Hogar</label><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_hogar" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_gmm">📋 Gastos Médicos</label><label style="font-size:13px; color:var(--text-muted);">Suma:</label><input type="number" id="suma_gmm" placeholder="$0.00"><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_gmm" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_mascota">🐕 Mascota</label><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_mascota" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_edu">🎓 Educación</label><label style="font-size:13px; color:var(--text-muted);">Suma:</label><input type="number" id="suma_edu" placeholder="$0.00"><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_edu" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_retiro">👴 Retiro</label><label style="font-size:13px; color:var(--text-muted);">Suma:</label><input type="number" id="suma_retiro" placeholder="$0.00"><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_retiro" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_inv">📈 Inversión</label><label style="font-size:13px; color:var(--text-muted);">Suma:</label><input type="number" id="suma_inv" placeholder="$0.00"><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_inv" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_vida">🎗️ Vida</label><label style="font-size:13px; color:var(--text-muted);">Suma:</label><input type="number" id="suma_vida" placeholder="$0.00"><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_vida" placeholder="0"></div>
+            <div class="ins-card"><label class="ins-card-header"><input type="checkbox" id="seg_empresa">🏢 Empresa</label><label style="font-size:13px; color:var(--text-muted);">Suma:</label><input type="number" id="suma_empresa" placeholder="$0.00"><label style="font-size:13px; color:var(--text-muted);">Pólizas:</label><input type="number" id="pol_empresa" placeholder="0"></div>
             
-            <!-- Quiz section will be rendered here by JavaScript -->
-            <div id="quiz-section"></div>
+            <label class="ins-card" style="display:flex; align-items:center; cursor:pointer;">
+                <input type="checkbox" id="chk_imss" style="width:22px; height:22px; margin-right:12px; accent-color: var(--primary-main);">
+                <div style="font-weight:700; color:var(--primary-dark); font-size:15px;">🦅 Seguridad Pública (IMSS/ISSSTE)</div>
+            </label>
+            <label class="ins-card" style="display:flex; align-items:center; cursor:pointer; border-color: var(--danger-red); background: #FEF2F2;">
+                <input type="checkbox" id="chk_ninguno" onchange="seleccionarNinguno()" style="width:22px; height:22px; margin-right:12px; accent-color: var(--danger-red);">
+                <div style="font-weight:700; color:var(--danger-red); font-size:15px;">🚫 Ninguno</div>
+            </label>
+        </div>
 
-            <!-- Completion screen shown after quiz -->
-            <div id="completion-screen" class="hidden animate-fade-in text-center py-12">
-                 <svg class="mx-auto h-16 w-16 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                 </svg>
-                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mt-6">¡Análisis completado!</h1>
-                 <p class="text-gray-600 mt-2 max-w-xl mx-auto">Hemos procesado tus respuestas para generar un reporte personalizado con áreas de oportunidad clave para tu bienestar financiero.</p>
-                 <button id="view-results-btn" class="mt-8 brand-primary-bg text-white font-bold py-3 px-8 rounded-lg brand-primary-bg-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
-                     Ver mis Resultados
-                 </button>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(21)">Atrás</button><button class="btn-primary" onclick="nextQuestion(23)">Continuar</button></div>
+    </div>
+
+    <!-- ==================== SECCIÓN 11: Estilo de vida ==================== -->
+    <div id="step-23" class="step" data-section="11">
+        <div class="question-title">En caso de una enfermedad, ¿a dónde acudirías para atenderte?</div>
+        <div class="form-group" id="opts_hospital"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(22)">Atrás</button><button class="btn-primary" onclick="nextQuestion(24)">Continuar</button></div>
+    </div>
+
+    <div id="step-24" class="step" data-section="11">
+        <div class="question-title">Actualmente, ¿tienes alguna enfermedad o padecimiento crónico?</div>
+        <div class="form-group" id="opts_enfermedad"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(23)">Atrás</button><button class="btn-primary" onclick="nextQuestion(25)">Continuar</button></div>
+    </div>
+
+    <div id="step-25" class="step" data-section="11">
+        <div class="question-title">Actualmente, ¿practicas algún deporte con regularidad?</div>
+        <div class="form-group" id="opts_deporte"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(24)">Atrás</button><button class="btn-primary" onclick="nextQuestion(26)">Continuar</button></div>
+    </div>
+
+    <div id="step-26" class="step" data-section="11">
+        <div class="question-title">¿A qué edad te gustaría dejar de trabajar y disfrutar tu retiro?</div>
+        <div class="form-group"><input type="number" id="q_edad_retiro" placeholder="Escribe aquí (años)"></div>
+        <div class="nav-buttons"><button class="btn-back" onclick="nextQuestion(25)">Atrás</button><button class="btn-primary" style="background-color: var(--primary-dark);" onclick="finalizar()">Generar Diagnóstico</button></div>
+    </div>
+
+    <!-- ==================== DASHBOARD FINAL ==================== -->
+    <div id="step-final" class="step dashboard">
+        <div style="text-align: center; margin-bottom: 5px; color: var(--primary-light); font-size: 14px; font-weight: 700; letter-spacing: 2px;">REPORTE EJECUTIVO</div>
+        <div class="dash-header">Diagnóstico de Salud Financiera</div>
+        <div style="color:var(--text-muted); text-align:center; margin-bottom: 30px; font-weight: 500;" id="perfil_text">Hombre | 30 años | México</div>
+
+        <div class="dash-grid">
+            <!-- Bloque Izquierdo -->
+            <div>
+                <h3 style="color:var(--primary-dark); font-size: 18px; margin-bottom:15px;">Evaluación General:</h3>
+                <div class="dash-card-dark">
+                    <div class="speedometer-container">
+                        <div class="speedometer">
+                            <div class="speedometer-needle" id="needle"></div>
+                        </div>
+                        <div class="badge-status" id="badge_status">ESTABLE</div>
+                    </div>
+                    <p style="text-align: center; color: #D1D5DB; font-size: 14px; margin-top: 15px;">Tu estado de resiliencia frente a eventualidades.</p>
+                </div>
+
+                <div class="dash-card">
+                    <h4 style="margin-top:0; color:var(--primary-dark); font-size: 16px;">Distribución de Ingresos:</h4>
+                    <div class="bar-row">
+                        <div class="bar-label" id="lbl_bar_gastos"><span>Gastos Fijos</span> <span>0%</span></div>
+                        <div class="bar-track"><div class="bar-fill bg-red" id="bar_gastos" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label" id="lbl_bar_ahorro"><span>Ahorro / Inversión</span> <span>0%</span></div>
+                        <div class="bar-track"><div class="bar-fill bg-dark" id="bar_ahorro" style="width: 0%;"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label" id="lbl_bar_tiempo"><span>Consistencia de Ahorro</span> <span>0 años</span></div>
+                        <div class="bar-track"><div class="bar-fill bg-green" id="bar_tiempo" style="width: 100%;"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label" id="lbl_bar_esparcimiento"><span>Estilo de Vida</span> <span>0%</span></div>
+                        <div class="bar-track"><div class="bar-fill bg-orange" id="bar_esparcimiento" style="width: 0%;"></div></div>
+                    </div>
+                </div>
+
+                <div class="dash-card">
+                    <h4 style="margin-top:0; color:var(--primary-dark); font-size: 16px;">Portafolio Actual:</h4>
+                    <div id="res_seguros_lista"></div>
+                </div>
             </div>
 
-            <!-- Analysis report section will be rendered here -->
-            <div id="analysis-section" class="hidden"></div>
-        </div>
-    </main>
+            <!-- Bloque Derecho -->
+            <div>
+                <h3 style="color:var(--primary-dark); font-size: 18px; margin-bottom:15px;">Análisis Comparativo e Insights:</h3>
+                
+                <div class="dash-card">
+                    <div style="font-size:15px; font-weight: 600; color:var(--primary-dark);">Perteneces al 60% de la población económicamente activa.</div>
+                    <div class="people-icons">
+                        <span class="person-active">👤</span><span class="person-active">👤</span><span class="person-active">👤</span><span class="person-active">👤</span><span class="person-active">👤</span><span class="person-active">👤</span>
+                        <span class="person-gray">👤</span><span class="person-gray">👤</span><span class="person-gray">👤</span><span class="person-gray">👤</span>
+                    </div>
+                </div>
 
-    <footer class="bg-white mt-12">
-        <div class="container mx-auto py-6 px-4 sm:px-6 text-center text-gray-600">
-            <p>&copy; 2024 Noctua Capital. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+                <div class="dash-card">
+                    <div class="stat-circle-row">
+                        <div class="circle-progress" id="circ_gmm"><div class="circle-inner" id="txt_circ_gmm">0%</div></div>
+                        <div style="font-size:14px; color:var(--text-main); line-height: 1.6;" id="desc_gmm">Sin seguro de Gastos Médicos Mayores, te encuentras en una posición vulnerable respecto al promedio de la población.</div>
+                    </div>
+                </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+                <div class="dash-card">
+                    <div class="stat-circle-row">
+                        <div class="circle-progress" id="circ_ahorro"><div class="circle-inner" id="txt_circ_ahorro">0%</div></div>
+                        <div style="font-size:14px; color:var(--text-main); line-height: 1.6;" id="desc_ahorro">Tu nivel de ahorro es analizado contra el promedio nacional.</div>
+                    </div>
+                </div>
+
+                <div class="dash-card" style="background:var(--primary-very-light); border:1px solid var(--primary-main);">
+                    <h4 style="margin-top:0; color:var(--primary-dark); font-size: 16px;">Estrategia Propuesta Noctua Capital</h4>
+                    <ul class="recommendation-list" id="lista_recomendaciones">
+                        <!-- Llenado por JS -->
+                    </ul>
+                </div>
+
+                <div class="dash-card">
+                    <h4 style="margin-top:0; color:var(--primary-dark); font-size: 16px;">Datos Macroeconómicos Base:</h4>
+                    <div style="border-top:1px solid var(--border-color); padding-top:12px;">
+                        <div style="font-weight:700; font-size:14px; color:var(--primary-dark); margin-bottom:4px;">Retiro y Longevidad:</div>
+                        <div style="font-size:13px; color:var(--text-muted);">La esperanza de vida promedio en México asciende a 75 años (INEGI). Un retiro a los 65 requiere financiar al menos 10 años de independencia.</div>
+                    </div>
+                    <div style="border-top:1px solid var(--border-color); padding-top:12px; margin-top:12px;">
+                        <div style="font-weight:700; font-size:14px; color:var(--primary-dark); margin-bottom:4px;">Riesgo de Salud:</div>
+                        <div style="font-size:13px; color:var(--text-muted);">El índice de morbilidad nacional (AMIS) indica una probabilidad del 29% de padecer una enfermedad grave antes de los 60 años.</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color);">
+            <button class="btn-primary" onclick="location.reload()">Realizar Nueva Evaluación</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- Barra fija para Sección 8 -->
+<div id="bar-100" class="percentage-bar">
+    <div style="font-size: 16px; font-weight: 500; font-family: 'Montserrat', sans-serif;">Porcentaje total <span id="lbl-suma" style="font-size:32px; font-weight:700; margin-left: 20px; color:#FFFFFF;">0%</span></div>
+    <div style="font-size: 13px; margin-top:8px; opacity: 0.8; color: #FFFFFF;">La suma de la distribución debe ser exactamente 100%</div>
+</div>
+
+<script>
+    const sectionsData = {
+        1: { title: "Información particular", steps: [1,2,3,4,5,6,7] },
+        2: { title: "Datos de cónyuge", steps: [8,9] },
+        3: { title: "Datos de hijos", steps: [10] },
+        4: { title: "Datos de tus hijos", steps: [11] },
+        5: { title: "Dependientes", steps: [12,13] },
+        6: { title: "Mascotas y bienes", steps: [14,15,16] },
+        7: { title: "Hábitos financieros", steps: [17,18] },
+        8: { title: "Hábitos financieros", steps: [19] },
+        9: { title: "Hábitos financieros", steps: [20,21] },
+        10: { title: "Hábitos protección", steps: [22] },
+        11: { title: "Estilo de vida", steps: [23,24,25,26] }
+    };
+
+    let estadoCivilGlobal = '';
+    let tieneHijosGlobal = '';
+
+    function createOptions(containerId, name, type, options) {
+        const container = document.getElementById(containerId);
+        let html = '';
+        options.forEach(opt => {
+            html += `
+            <label class="option-box">
+                <input type="${type}" name="${name}" value="${opt}" onclick="updateSelected(this)">
+                <div class="custom-radio"></div>
+                <div>${opt}</div>
+            </label>`;
         });
+        container.innerHTML = html;
+    }
 
-        // =================================================================================
-        // DEVMAESTRO INSIGHT: APPLICATION ARCHITECTURE
-        // The original code was a single, long script. This refactored version uses a
-        // modular pattern (the `FinancialCheckupApp` object). This approach, known as
-        // "Separation of Concerns," makes the code cleaner, easier to debug, and
-        // more maintainable. Each part of the app (quiz logic, analysis, rendering)
-        // now has its own dedicated space.
-        // =================================================================================
+    function updateSelected(input) {
+        if(input.type === 'radio') {
+            const boxes = document.querySelectorAll(`input[name="${input.name}"]`);
+            boxes.forEach(box => box.parentElement.classList.remove('selected'));
+        }
+        if(input.checked) { input.parentElement.classList.add('selected'); } 
+        else { input.parentElement.classList.remove('selected'); }
+        
+        if(input.name === 'edocivil') estadoCivilGlobal = input.value;
+        if(input.name === 'tiene_hijos') tieneHijosGlobal = input.value;
+    }
 
-        var FinancialCheckupApp = {
-            // --- STATE MANAGEMENT ---
-            // Centralizing the application's state (data) makes it easier to track and manage.
-            state: {
-                currentQuestionIndex: 0,
-                userAnswers: {
-                    childrenData: [],
-                    currentInsurances: []
-                },
-                analysisResults: null
-            },
+    // Inicializar Opciones
+    createOptions('opts_genero', 'genero', 'radio', ['Hombre', 'Mujer', 'Prefiero no responder']);
+    createOptions('opts_estudios', 'estudios', 'radio', ['Sin estudios', 'Primaria', 'Secundaria', 'Preparatoria', 'Universidad', 'Posgrado', 'Maestría', 'Doctorado']);
+    createOptions('opts_ocupacion', 'ocupacion', 'radio', ['Empleado', 'Pensionado', 'Independiente', 'Negocio propio', 'Empresario', 'Desempleado']);
+    createOptions('opts_edocivil', 'edocivil', 'radio', ['Soltero', 'Casado', 'Unión libre', 'Divorciado', 'Viudo']);
+    createOptions('opts_genero_pareja', 'genero_pareja', 'radio', ['Hombre', 'Mujer', 'Prefiero no responder']);
+    createOptions('opts_tiene_hijos', 'tiene_hijos', 'radio', ['Sí', 'No']);
+    createOptions('opts_dependientes', 'dependientes', 'radio', ['No tengo', 'Madre o padre', 'Hermanos', 'Abuelos', 'Tía(o)', 'Sobrina(o)', 'Otro']);
+    createOptions('opts_mascotas', 'mascotas', 'radio', ['Sí', 'No']);
+    createOptions('opts_auto', 'auto', 'radio', ['Sí', 'No']);
+    createOptions('opts_casa', 'casa', 'radio', ['Sí', 'No']);
+    createOptions('opts_ingresos', 'ingresos', 'radio', ['$14,999 o menos', '$15,000 - $29,999', '$30,000 - $44,999', '$45,000 - $64,999', '$65,000 - $79,999', '$80,000 - $94,999', '$95,000 - $109,999']);
+    createOptions('opts_objetivo_ahorro', 'objetivo_ahorro', 'checkbox', ['Retiro', 'Fondo escolar', 'Viaje', 'Inmuebles', 'Auto', 'Fondo emergencia', 'Emprender negocio']);
+    createOptions('opts_hospital', 'hospital', 'radio', ['Hospital Privado', 'Hospital Público']);
+    createOptions('opts_enfermedad', 'enfermedad', 'radio', ['Sí', 'No']);
+    createOptions('opts_deporte', 'deporte', 'radio', ['Sí, bajo riesgo', 'Sí, alto riesgo', 'No practico deporte']);
 
-            // --- CONFIGURATION ---
-            // Storing questions as data allows for a dynamic and easily updatable quiz.
-            questions: [
-                 { id: 'postalCode', section: 'Información Particular', type: 'text', text: '¿Cuál es tu código postal?', placeholder: 'Ej: 72000' },
-                 { id: 'birthDate', section: 'Información Particular', type: 'date', text: '¿Cuál es tu fecha de nacimiento?' },
-                 { id: 'gender', section: 'Información Particular', type: 'radio', text: '¿Con qué género te identificas?', options: ['Hombre', 'Mujer', 'Prefiero no responder'] },
-                 { id: 'maritalStatus', section: 'Información Particular', type: 'radio', text: '¿Cuál es tu estado civil actual?', options: ['Soltero', 'Casado', 'Unión libre', 'Divorciado', 'Viudo'] },
-                 { id: 'educationLevel', section: 'Información Particular', type: 'radio', text: '¿Cuál es tu nivel más alto de estudios?', options: ['Sin estudios', 'Primaria', 'Secundaria', 'Preparatoria', 'Universidad', 'Maestría', 'Doctorado'] },
-                 { id: 'occupation', section: 'Información Particular', type: 'radio', text: '¿Cuál es tu ocupación actual?', options: ['Empleado', 'Pensionado', 'Independiente', 'Negocio propio', 'Empresario', 'Desempleado'] },
-                 { id: 'workExperience', section: 'Información Particular', type: 'number', text: '¿Cuántos años de experiencia laboral tienes?', placeholder: 'Ej: 10', unit: 'años' },
-                 { id: 'spouseAge', section: 'Datos de Cónyuge', type: 'number', text: '¿Qué edad tiene tu pareja?', placeholder: 'Ej: 35', unit: 'años', condition: function(data) { return ['Casado', 'Unión libre'].indexOf(data.maritalStatus) > -1; } },
-                 { id: 'spouseGender', section: 'Datos de Cónyuge', type: 'radio', text: '¿Cuál es el género de tu pareja?', options: ['Hombre', 'Mujer', 'Prefiero no responder'], condition: function(data) { return ['Casado', 'Unión libre'].indexOf(data.maritalStatus) > -1; } },
-                 { id: 'hasChildren', section: 'Datos de Hijos', type: 'radio', text: '¿Tienes hijos?', options: ['Sí', 'No'] },
-                 { id: 'childrenData', section: 'Datos de Hijos', type: 'children', text: 'Ingresa los datos de tus hijos.', condition: function(data) { return data.hasChildren === 'Sí'; } },
-                 { id: 'otherDependents', section: 'Dependientes', type: 'radio', text: '¿Tienes otros dependientes económicos (sin contar cónyuge e hijos)?', options: ['No tengo', 'Madre o padre', 'Hermanos', 'Abuelos', 'Otro'] },
-                 { id: 'mainGoal', section: 'Metas Financieras', type: 'text', text: 'Actualmente, ¿cuál es tu principal meta o preocupación financiera?', placeholder: 'Ej: La seguridad de mi familia' },
-                 { id: 'hasPets', section: 'Bienes', type: 'radio', text: '¿Tienes mascotas en tu hogar (perro/gato)?', options: ['Sí', 'No'] },
-                 { id: 'hasCar', section: 'Bienes', type: 'radio', text: '¿Tienes automóvil?', options: ['Sí', 'No'] },
-                 { id: 'hasHouse', section: 'Bienes', type: 'radio', text: '¿Tienes casa y/o departamento propio?', options: ['Sí', 'No'] },
-                 { id: 'familyIncome', section: 'Hábitos Financieros', type: 'radio', text: 'Selecciona el rango mensual aproximado de los ingresos familiares:', options: ['$14,999 o menos', '$15,000 - $29,999', '$30,000 - $44,999', '$45,000 - $64,999', '$65,000 - $79,999', '$80,000 - $94,999', '$95,000 - $109,999', '$110,000 o más'] },
-                 { id: 'monthlySavingsAmount', section: 'Hábitos Financieros', type: 'number', text: 'Aproximadamente, ¿cuánto ahorras mensualmente?', placeholder: 'Ej: 2500', unit: '$' },
-                 { id: 'emergencyFund', section: 'Hábitos Financieros', type: 'radio', text: '¿Cuentas con un fondo de emergencia para imprevistos?', options: ['No tengo un fondo', 'Sí, menos de 1 mes de mis gastos', 'Sí, entre 1 y 3 meses de mis gastos', 'Sí, entre 3 y 6 meses de mis gastos', 'Sí, más de 6 meses de mis gastos'] },
-                 { id: 'percentageDebt', section: 'Hábitos Financieros', type: 'slider', text: '¿Qué porcentaje de tu ingreso destinas para cubrir deudas?', min: 0, max: 100, step: 5, unit: '%' },
-                 { id: 'currentInsurances', section: 'Protección Actual', type: 'checkbox', text: '¿Qué seguros tienes contratados actualmente?', options: [
-                     { value: 'Auto', label: 'Auto', icon: '🚗' }, { value: 'Hogar', label: 'Hogar', icon: '🏠' },
-                     { value: 'Gastos Médicos Mayores', label: 'GMM', icon: '📋' }, { value: 'Mascota', label: 'Mascota', icon: '🐾' },
-                     { value: 'Educación', label: 'Educación', icon: '🎓' }, { value: 'Retiro', label: 'Retiro', icon: '👴' },
-                     { value: 'Inversión', label: 'Inversión', icon: '📈' }, { value: 'Vida', label: 'Vida', icon: '🎗️' },
-                     { value: 'IMSS/ISSSTE', label: 'IMSS/ISSSTE', icon: '🏢' }, { value: 'Negocio', label: 'Negocio', icon: '🏪' },
-                     { value: 'Ninguno', label: 'Ninguno', icon: '😔' }
-                 ]},
-                 { id: 'medicalPreference', section: 'Estilo de Vida', type: 'radio', text: 'En caso de una enfermedad, ¿dónde preferirías atenderte?', options: ['Hospital Privado', 'Hospital Público'] },
-                 { id: 'retirementAge', section: 'Estilo de Vida', type: 'number', text: '¿A qué edad te gustaría retirarte?', placeholder: '65', unit: 'años' },
-            ],
-            
-            // --- DOM ELEMENTS ---
-            // Caching DOM elements improves performance by avoiding repeated queries to the document.
-            elements: {
-                quizSection: document.getElementById('quiz-section'),
-                completionScreen: document.getElementById('completion-screen'),
-                analysisSection: document.getElementById('analysis-section'),
-                viewResultsBtn: document.getElementById('view-results-btn'),
-            },
+    let numHijosUI = 0;
+    function agregarHijo() {
+        numHijosUI++;
+        const container = document.getElementById('hijos_container');
+        const div = document.createElement('div');
+        div.style.marginBottom = '25px';
+        div.innerHTML = `
+            <div style="font-weight:700; margin-bottom:12px; color:var(--primary-dark);">Hijo ${numHijosUI}</div>
+            <div style="display:flex; gap:15px; margin-bottom:15px;">
+                <label class="option-box" style="flex:1;"><input type="radio" name="gh_${numHijosUI}" value="Hombre" onclick="updateSelected(this)"><div class="custom-radio"></div><div>Hombre</div></label>
+                <label class="option-box" style="flex:1;"><input type="radio" name="gh_${numHijosUI}" value="Mujer" onclick="updateSelected(this)"><div class="custom-radio"></div><div>Mujer</div></label>
+            </div>
+            <input type="number" placeholder="Edad actual (años)">
+            <hr style="border:0; border-top:1px solid var(--border-color); margin-top:25px;">`;
+        container.appendChild(div);
+    }
+    agregarHijo();
 
-            // --- INITIALIZATION ---
-            init: function() {
-                this.elements.viewResultsBtn.addEventListener('click', function() {
-                    FinancialCheckupApp.elements.completionScreen.classList.add('hidden');
-                    FinancialCheckupApp.elements.analysisSection.classList.remove('hidden');
-                    FinancialCheckupApp.analysis.renderReport(FinancialCheckupApp.state.userAnswers);
-                });
-                this.quiz.renderCurrentQuestion();
-            },
-
-            // =========================================================================
-            // QUIZ MODULE
-            // All logic related to displaying questions, handling navigation,
-            // and saving answers is encapsulated here.
-            // =========================================================================
-            quiz: {
-                getVisibleQuestions: function() {
-                    var app = FinancialCheckupApp;
-                    return app.questions.filter(function(q) {
-                        return !q.condition || q.condition(app.state.userAnswers);
-                    });
-                },
-
-                handleNext: function() {
-                    if (this.saveAnswer()) {
-                        FinancialCheckupApp.state.currentQuestionIndex++;
-                        this.renderCurrentQuestion();
-                    } else {
-                        // DEVMAESTRO INSIGHT: User Feedback
-                        // Provide clear feedback if a question is not answered. A simple alert
-                        // is disruptive. A subtle visual cue is much better UX.
-                        var qContainer = document.getElementById('question-container');
-                        qContainer.classList.add('animate-shake');
-                        setTimeout(function() { qContainer.classList.remove('animate-shake'); }, 600);
-                        
-                        // Add temporary animation style
-                        if (!document.getElementById('shake-style')) {
-                            var style = document.createElement('style');
-                            style.id = 'shake-style';
-                            style.innerHTML = '@keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } } .animate-shake { animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both; }';
-                            document.head.appendChild(style);
-                        }
-                    }
-                },
-
-                handleBack: function() {
-                    if (FinancialCheckupApp.state.currentQuestionIndex > 0) {
-                        FinancialCheckupApp.state.currentQuestionIndex--;
-                        this.renderCurrentQuestion();
-                    }
-                },
-                
-                saveAnswer: function() {
-                    var question = this.getVisibleQuestions()[FinancialCheckupApp.state.currentQuestionIndex];
-                    if (!question) return false;
-
-                    var id = question.id;
-                    var type = question.type;
-                    var answers = FinancialCheckupApp.state.userAnswers;
-
-                    switch (type) {
-                        case 'radio':
-                            var selectedRadio = document.querySelector('input[name="' + id + '"]:checked');
-                            if (!selectedRadio) return false;
-                            answers[id] = selectedRadio.value;
-                            break;
-                        case 'checkbox':
-                            if (answers.currentInsurances.length === 0) return false;
-                            // Data is already saved by the event listener in `attachEventListeners`
-                            break;
-                        case 'slider':
-                             answers[id] = document.getElementById(id).value;
-                             break;
-                        case 'children':
-                            var childrenAreValid = true;
-                            answers.childrenData.forEach(function(c) {
-                                if (!c.age || c.age <= 0) {
-                                    childrenAreValid = false;
-                                }
-                            });
-                            return childrenAreValid;
-                        default: // text, number, date
-                            var input = document.getElementById(id);
-                            if (!input || !input.value) return false;
-                            answers[id] = input.value;
-                            break;
-                    }
-                    return true;
-                },
-
-                renderCurrentQuestion: function() {
-                    var visibleQuestions = this.getVisibleQuestions();
-                    var state = FinancialCheckupApp.state;
-                    var elements = FinancialCheckupApp.elements;
-
-                    if (state.currentQuestionIndex >= visibleQuestions.length) {
-                        elements.quizSection.innerHTML = '';
-                        elements.quizSection.classList.add('hidden');
-                        elements.completionScreen.classList.remove('hidden');
-                        return;
-                    }
-
-                    var question = visibleQuestions[state.currentQuestionIndex];
-                    var sections = this.getUniqueSections(visibleQuestions);
-                    var currentSectionName = question.section;
-                    var currentSectionIndex = sections.indexOf(currentSectionName) + 1;
-                    
-                    var inputHtml = this.renderers[question.type](question, state.userAnswers);
-
-                    var progressBarHtml = sections.map(function(sec, i) {
-                        var barClass = i < currentSectionIndex - 1 ? 'bg-green-500' : (i === currentSectionIndex - 1 ? 'brand-primary-bg' : 'bg-gray-200');
-                        return '<div class="w-full h-1.5 rounded-full ' + barClass + ' transition-all duration-500"></div>';
-                    }).join('');
-
-                    elements.quizSection.innerHTML =
-                        '<div class="animate-fade-in">' +
-                            '<h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-900">Check up Financiero</h1>' +
-                            '<div class="my-6">' +
-                                '<p class="text-center text-sm font-medium text-gray-600 mb-2">' + currentSectionName + ' (' + currentSectionIndex + ' de ' + sections.length + ')</p>' +
-                                '<div class="flex space-x-2">' + progressBarHtml + '</div>' +
-                            '</div>' +
-                            '<div id="question-container" class="mt-8">' +
-                                '<h2 class="text-xl font-semibold text-gray-800">' + question.text + '</h2>' +
-                                inputHtml +
-                            '</div>' +
-                            '<div class="mt-10 flex items-center justify-between">' +
-                                '<button id="back-btn" class="flex items-center space-x-2 text-gray-600 font-semibold hover:text-gray-900 transition-colors ' + (state.currentQuestionIndex === 0 ? 'invisible' : '') + '">' +
-                                    '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>' +
-                                    '<span>Atrás</span>' +
-                                '</button>' +
-                                '<button id="next-btn" class="brand-primary-bg text-white font-bold py-3 px-8 rounded-lg brand-primary-bg-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">Continuar</button>' +
-                            '</div>' +
-                        '</div>';
-                    
-                    this.attachEventListeners();
-                },
-                
-                getUniqueSections: function(questions) {
-                    var seen = {};
-                    var result = [];
-                    for (var i = 0; i < questions.length; i++) {
-                        var section = questions[i].section;
-                        if (!seen[section]) {
-                            seen[section] = true;
-                            result.push(section);
-                        }
-                    }
-                    return result;
-                },
-                
-                // --- RENDERER HELPERS ---
-                renderers: {
-                    text: function(q, data) { return '<input type="text" id="' + q.id + '" value="' + (data[q.id] || '') + '" placeholder="' + (q.placeholder || '') + '" class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm">'; },
-                    number: function(q, data) {
-                        var savedValue = data[q.id] || '';
-                        if (q.unit) {
-                            return '<div class="relative mt-4"><div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">' + q.unit + '</div><input type="number" id="' + q.id + '" value="' + savedValue + '" placeholder="' + q.placeholder + '" class="w-full p-3 ' + (q.unit === '$' ? 'pl-7' : 'pr-16') + ' border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm"><div class="absolute inset-y-0 right-4 flex items-center text-gray-500">' + (q.unit !== '$' ? q.unit : '') + '</div></div>';
-                        }
-                        return '<input type="number" id="' + q.id + '" value="' + savedValue + '" placeholder="' + q.placeholder + '" class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm">';
-                    },
-                    date: function(q, data) { return '<input type="date" id="' + q.id + '" value="' + (data[q.id] || '') + '" class="mt-4 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 brand-primary-ring focus:border-transparent transition-shadow shadow-sm">'; },
-                    radio: function(q, data) {
-                        var optionsHtml = '';
-                        for (var i = 0; i < q.options.length; i++) {
-                            var option = q.options[i];
-                            var checked = (data[q.id] || '') === option;
-                            optionsHtml += '<label for="' + q.id + '-' + option + '" class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-green-50/50 transition-colors duration-200 ' + (checked ? 'brand-primary-border ring-2 brand-primary-ring' : 'bg-white') + ' shadow-sm">' +
-                                '<input type="radio" id="' + q.id + '-' + option + '" name="' + q.id + '" value="' + option + '" ' + (checked ? 'checked' : '') + ' class="hidden">' +
-                                '<span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center mr-4 form-radio ' + (checked ? 'form-radio:checked' : '') + '"></span>' +
-                                '<span class="font-medium text-gray-800">' + option + '</span>' +
-                            '</label>';
-                        }
-                        return '<div class="mt-4 space-y-3">' + optionsHtml + '</div>';
-                    },
-                    checkbox: function(q, data) {
-                        var optionsHtml = '';
-                        for(var i = 0; i < q.options.length; i++) {
-                            var option = q.options[i];
-                            var checked = data.currentInsurances.indexOf(option.value) > -1;
-                            optionsHtml += '<label for="' + q.id + '-' + option.value + '" class="flex flex-col items-center justify-center text-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-green-50/50 transition-colors duration-200 ' + (checked ? 'brand-primary-border ring-2 brand-primary-ring' : 'bg-white') + ' shadow-sm">' +
-                                '<input type="checkbox" id="' + q.id + '-' + option.value + '" name="' + q.id + '" value="' + option.value + '" ' + (checked ? 'checked' : '') + ' class="hidden">' +
-                                '<span class="text-3xl mb-2">' + option.icon + '</span>' +
-                                '<span class="font-medium text-sm text-gray-800">' + option.label + '</span>' +
-                            '</label>';
-                        }
-                        return '<div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">' + optionsHtml + '</div>';
-                    },
-                    slider: function(q, data) {
-                        var val = data[q.id] || q.min;
-                        return '<div class="mt-8">' +
-                                '<div class="text-center mb-4">' +
-                                    '<span id="' + q.id + '-value" class="text-4xl font-bold brand-primary-text">' + val + q.unit + '</span>' +
-                                '</div>' +
-                                '<input type="range" id="' + q.id + '" min="' + q.min + '" max="' + q.max + '" step="' + q.step + '" value="' + val + '" class="w-full">' +
-                                '<div class="flex justify-between items-center mt-2 text-xs text-gray-500">' +
-                                    '<span>' + q.min + q.unit + '</span>' +
-                                    '<span>' + q.max + q.unit + '</span>' +
-                                '</div>' +
-                            '</div>';
-                    },
-                    children: function() {
-                        return '<div id="children-list" class="mt-4 space-y-4"></div>' +
-                                    '<button id="add-child-btn" class="mt-4 text-sm brand-primary-text font-semibold hover:text-green-800 transition-colors flex items-center space-x-2">' +
-                                        '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" /></svg>' +
-                                        '<span>Agregar hijo</span>' +
-                                    '</button>';
-                    },
-                },
-                
-                attachEventListeners: function() {
-                    var question = this.getVisibleQuestions()[FinancialCheckupApp.state.currentQuestionIndex];
-                    if (!question) return;
-
-                    document.getElementById('next-btn').addEventListener('click', this.handleNext.bind(this));
-                    document.getElementById('back-btn').addEventListener('click', this.handleBack.bind(this));
-                    
-                    // --- Specific Listeners per Question Type ---
-                    switch(question.type) {
-                        case 'radio':
-                            document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(radio) {
-                                radio.addEventListener('change', function(e) {
-                                    FinancialCheckupApp.state.userAnswers[question.id] = e.target.value;
-                                    document.querySelectorAll('label[for^="' + question.id + '-"]').forEach(function(l) {
-                                        l.classList.remove('brand-primary-border', 'ring-2', 'brand-primary-ring');
-                                    });
-                                    document.querySelector('label[for="' + e.target.id + '"]').classList.add('brand-primary-border', 'ring-2', 'brand-primary-ring');
-                                });
-                            });
-                            break;
-                        case 'checkbox':
-                            document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(checkbox) {
-                                checkbox.addEventListener('change', function(e) {
-                                    var value = e.target.value;
-                                    var checked = e.target.checked;
-                                    var answers = FinancialCheckupApp.state.userAnswers.currentInsurances;
-                                    var tempAnswers = [];
-
-                                    if (value === 'Ninguno' && checked) {
-                                        tempAnswers = ['Ninguno'];
-                                        document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(cb) { if (cb.value !== 'Ninguno') cb.checked = false; });
-                                    } else {
-                                        // Filter out 'Ninguno' if another box is checked
-                                        for(var i=0; i<answers.length; i++) {
-                                            if(answers[i] !== 'Ninguno') tempAnswers.push(answers[i]);
-                                        }
-                                        var noneCheckbox = document.getElementById(question.id + '-Ninguno');
-                                        if(noneCheckbox) noneCheckbox.checked = false;
-
-                                        // Add or remove the current value
-                                        var index = tempAnswers.indexOf(value);
-                                        if (checked) {
-                                            if (index === -1) tempAnswers.push(value);
-                                        } else {
-                                            if (index > -1) tempAnswers.splice(index, 1);
-                                        }
-                                    }
-                                    FinancialCheckupApp.state.userAnswers.currentInsurances = tempAnswers;
-
-                                    document.querySelectorAll('input[name="' + question.id + '"]').forEach(function(cb) {
-                                        var label = document.querySelector('label[for="' + cb.id + '"]');
-                                        var isChecked = cb.checked;
-                                        if (isChecked) {
-                                            label.classList.add('brand-primary-border', 'ring-2', 'brand-primary-ring');
-                                        } else {
-                                            label.classList.remove('brand-primary-border', 'ring-2', 'brand-primary-ring');
-                                        }
-                                    });
-                                });
-                            });
-                            break;
-                        case 'slider':
-                            var slider = document.getElementById(question.id);
-                            var valueDisplay = document.getElementById(question.id + '-value');
-                            slider.addEventListener('input', function() { valueDisplay.textContent = slider.value + question.unit; });
-                            break;
-                        case 'children':
-                            if (FinancialCheckupApp.state.userAnswers.childrenData.length === 0) {
-                                FinancialCheckupApp.state.userAnswers.childrenData.push({ gender: 'Hombre', age: '' });
-                            }
-                            this.renderChildren();
-                            document.getElementById('add-child-btn').addEventListener('click', function() {
-                                FinancialCheckupApp.state.userAnswers.childrenData.push({ gender: 'Hombre', age: '' });
-                                this.renderChildren();
-                            }.bind(this));
-                            break;
-                    }
-                },
-                
-                renderChildren: function() {
-                    var list = document.getElementById('children-list');
-                    if (!list) return;
-                    list.innerHTML = '';
-                    var childrenData = FinancialCheckupApp.state.userAnswers.childrenData;
-                    
-                    var self = this; // Store reference to `this` for use in nested functions
-                    childrenData.forEach(function(child, index) {
-                        var childDiv = document.createElement('div');
-                        childDiv.className = 'p-4 border border-gray-200 rounded-lg relative bg-gray-50/80 animate-fade-in';
-                        childDiv.innerHTML =
-                            '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">' +
-                                '<div>' +
-                                    '<label class="block text-sm font-medium text-gray-700">Género (Hijo ' + (index + 1) + ')</label>' +
-                                    '<select data-index="' + index + '" data-field="gender" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 brand-primary-ring focus:border-transparent">' +
-                                        '<option value="Hombre" ' + (child.gender === 'Hombre' ? 'selected' : '') + '>Hombre</option>' +
-                                        '<option value="Mujer" ' + (child.gender === 'Mujer' ? 'selected' : '') + '>Mujer</option>' +
-                                    '</select>' +
-                                '</div>' +
-                                '<div>' +
-                                    '<label class="block text-sm font-medium text-gray-700">Edad</label>' +
-                                    '<input type="number" data-index="' + index + '" data-field="age" value="' + child.age + '" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 brand-primary-ring focus:border-transparent" placeholder="años">' +
-                                '</div>' +
-                            '</div>' +
-                            (childrenData.length > 1 ? '<button data-index="' + index + '" class="remove-child-btn absolute -top-2 -right-2 text-red-500 bg-white rounded-full w-6 h-6 flex items-center justify-center border shadow-sm hover:bg-red-50 hover:scale-110 transition-transform">&times;</button>' : '');
-
-                        list.appendChild(childDiv);
-                    });
-                    
-                    list.querySelectorAll('select, input').forEach(function(input) {
-                        input.addEventListener('change', function(e) {
-                            FinancialCheckupApp.state.userAnswers.childrenData[e.target.dataset.index][e.target.dataset.field] = e.target.value;
-                        });
-                    });
-                    list.querySelectorAll('.remove-child-btn').forEach(function(btn) {
-                        btn.addEventListener('click', function(e) {
-                            FinancialCheckupApp.state.userAnswers.childrenData.splice(e.target.dataset.index, 1);
-                            self.renderChildren(); // Use the stored reference
-                        });
-                    });
-                },
-
-            },
-
-            // =========================================================================
-            // ANALYSIS MODULE
-            // All logic related to calculating scores and rendering the final report
-            // is encapsulated here.
-            // =========================================================================
-            analysis: {
-                calculateResults: function(data) {
-                    var getIncomeAvg = function(incomeRange) {
-                        if (!incomeRange) return 0;
-                        var cleanStr = incomeRange.replace(/[^0-9-]/g, '');
-                        var numbers = cleanStr.split('-').map(function(n) { return parseInt(n, 10); });
-
-                        if (numbers.length > 1 && !isNaN(numbers[0]) && !isNaN(numbers[1])) {
-                             return (numbers[0] + numbers[1]) / 2;
-                        }
-                        
-                        var singleNumber = numbers[0] || 0;
-                        if(incomeRange.indexOf('o menos') > -1) return singleNumber;
-                        if(incomeRange.indexOf('o más') > -1) return singleNumber;
-
-                        return 0; // Default case
-                    };
-                    
-                    var getObjectValues = function(obj) {
-                        var values = [];
-                        for (var key in obj) {
-                            if (obj.hasOwnProperty(key)) {
-                                values.push(obj[key]);
-                            }
-                        }
-                        return values;
-                    };
-                    
-                    var getObjectEntries = function(obj) {
-                        var entries = [];
-                        for (var key in obj) {
-                            if (obj.hasOwnProperty(key)) {
-                                entries.push([key, obj[key]]);
-                            }
-                        }
-                        return entries;
-                    };
-
-                    var score = 0;
-                    var incomeAvg = getIncomeAvg(data.familyIncome);
-                    var recommendedSavings = incomeAvg * 0.20;
-                    var actualSavings = parseInt(data.monthlySavingsAmount || 0);
-
-                    var savingsRatio = recommendedSavings > 0 ? Math.min(actualSavings / recommendedSavings, 1) : 0;
-                    score += savingsRatio * 30;
-
-                    var debtRate = parseInt(data.percentageDebt || 0);
-                    if (debtRate <= 30) score += 20;
-                    else if (debtRate <= 50) score += 10;
-                    
-                    var emergencyFundAnswer = data.emergencyFund || 'No tengo un fondo';
-                    if (emergencyFundAnswer.indexOf('3 y 6') > -1) score += 20;
-                    else if (emergencyFundAnswer.indexOf('más de 6') > -1) score += 20;
-                    else if (emergencyFundAnswer.indexOf('1 y 3') > -1) score += 10;
-                    else if (emergencyFundAnswer.indexOf('menos de 1') > -1) score += 5;
-
-                    var protectionPoints = 0;
-                    var hasLife = data.currentInsurances.indexOf('Vida') > -1;
-                    var hasGMM = data.currentInsurances.indexOf('Gastos Médicos Mayores') > -1;
-                    if (data.hasChildren === 'Sí' && hasLife) protectionPoints += 12;
-                    if (data.medicalPreference === 'Hospital Privado' && hasGMM) protectionPoints += 12;
-                    if (data.hasHouse === 'Sí' && data.currentInsurances.indexOf('Hogar') > -1) protectionPoints += 6;
-                    score += (protectionPoints / 30) * 30;
-
-                    var finalScore = Math.round(Math.max(0, Math.min(100, score)));
-                    var status, statusColor;
-                    if (finalScore < 50) { status = 'Vulnerable'; statusColor = 'text-red-600'; }
-                    else if (finalScore < 80) { status = 'En Desarrollo'; statusColor = 'text-yellow-600'; }
-                    else { status = 'Sana'; statusColor = 'text-green-600'; }
-                    
-                    var priorities = { Vida: 20, GMM: 20, Retiro: 20, Hogar: 10, Auto: 5, Educación: 0 };
-                    if (data.hasChildren === 'Sí') { priorities.Vida += 25; priorities.GMM += 10; priorities.Educación += 20;}
-                    if (['Independiente', 'Negocio propio'].indexOf(data.occupation) > -1) { priorities.GMM += 15; priorities.Retiro += 10; }
-                    if (data.hasHouse === 'Sí') priorities.Hogar += 10;
-                    if (data.hasCar === 'Sí') priorities.Auto += 10;
-                    
-                    var totalPriority = getObjectValues(priorities).reduce(function(a, b) { return a + b; }, 0);
-                    for (var key in priorities) { if(priorities.hasOwnProperty(key)) priorities[key] = Math.round((priorities[key] / totalPriority) * 100); }
-                    
-                    var sortedPriorities = getObjectEntries(priorities).filter(function(entry) { return entry[1] > 0; }).sort(function(a, b) { return b[1] - a[1]; });
-                    
-                    var dataByRegion = { 'Norte': { consulta: 1200, urgencia: 8000, universidad: 850000 }, 'Centro': { consulta: 1000, urgencia: 7500, universidad: 690000 }, 'Sur': { consulta: 900, urgencia: 6500, universidad: 550000 } };
-                    var postalCodePrefix = (data.postalCode || '00000')[0];
-                    var region = 'Centro';
-                    var northPrefixes = ['8', '9', '2', '3'];
-                    var southPrefixes = ['7'];
-                    if (northPrefixes.indexOf(postalCodePrefix) > -1) region = 'Norte';
-                    if (southPrefixes.indexOf(postalCodePrefix) > -1) region = 'Sur';
-                    
-                    return { finalScore: finalScore, status: status, statusColor: statusColor, recommendedSavings: recommendedSavings, priorities: sortedPriorities, regionalData: dataByRegion[region] };
-                },
-
-                renderReport: function(data) {
-                    var results = this.calculateResults(data);
-                    FinancialCheckupApp.state.analysisResults = results;
-                    var finalScore = results.finalScore;
-                    var status = results.status;
-                    var statusColor = results.statusColor;
-                    var recommendedSavings = results.recommendedSavings;
-                    var priorities = results.priorities;
-                    var regionalData = results.regionalData;
-                    
-                    var actualSavings = parseInt(data.monthlySavingsAmount || 0);
-                    var savingsFeedback, savingsColor;
-                    if (actualSavings >= recommendedSavings) { savingsFeedback = '¡Excelente! Estás ahorrando por encima del 20% recomendado.'; savingsColor = 'text-green-600'; }
-                    else if (actualSavings > 0) { savingsFeedback = 'Vas por buen camino, pero puedes optimizar tu ahorro para alcanzar la meta recomendada.'; savingsColor = 'text-yellow-600'; }
-                    else { savingsFeedback = 'Área de oportunidad: Actualmente no estás construyendo un ahorro mensual.'; savingsColor = 'text-red-600'; }
-
-                    var consultationTopics = '';
-                    if (finalScore < 50) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🎯</div><span>Discutir un plan de acción para estabilizar tus finanzas.</span></li>';
-                    if (data.currentInsurances.indexOf('Vida') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">👨‍👩‍👧</div><span>Explorar cómo un seguro de vida puede proteger el futuro de tu familia.</span></li>';
-                    if (data.currentInsurances.indexOf('Gastos Médicos Mayores') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🏥</div><span>Revisar opciones de seguros de salud que se ajusten a tus necesidades.</span></li>';
-                    if (data.currentInsurances.indexOf('Retiro') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🏖️</div><span>Crear una estrategia para empezar a construir tu fondo para el retiro.</span></li>';
-                    if (data.hasChildren === 'Sí' && data.currentInsurances.indexOf('Educación') === -1) consultationTopics += '<li class="flex items-start space-x-3"><div class="flex-shrink-0">🎓</div><span>Analizar planes de ahorro para garantizar la educación de tus hijos.</span></li>';
-
-                    var reportHtml =
-                        '<div id="report-content" class="bg-white p-4 sm:p-8 animate-fade-in">' +
-                            '<h1 class="text-3xl font-extrabold brand-primary-text">Reporte de Salud Financiera</h1>' +
-                            '<p class="text-sm text-gray-500">Análisis generado el ' + new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' }) + '</p>' +
-                            
-                            '<div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">' +
-                                '<div class="lg:col-span-1 bg-gray-50 p-6 rounded-2xl text-center flex flex-col justify-center">' +
-                                    '<h2 class="text-lg font-semibold text-gray-700">Tu Puntuación General:</h2>' +
-                                    '<p class="text-7xl font-extrabold brand-primary-text my-2">' + finalScore + '<span class="text-3xl text-gray-400 font-semibold">/100</span></p>' +
-                                    '<p class="font-semibold text-xl text-gray-800">Diagnóstico: Finanzas <span class="' + statusColor + '">' + status + '</span></p>' +
-                                '</div>' +
-                                '<div class="lg:col-span-2 bg-gray-50 p-6 rounded-2xl">' +
-                                    '<h2 class="text-2xl font-bold brand-primary-text mb-4">Prioridades de Protección</h2>' +
-                                    '<p class="text-sm text-gray-600 mb-4">Basado en tus respuestas, estas son las áreas más importantes a considerar para tu plan financiero:</p>' +
-                                    '<div class="h-64"><canvas id="prioritiesChart"></canvas></div>' +
-                                    '<p class="text-xs text-gray-500 mt-4 italic">' +
-                                        '<span class="font-bold">Nota:</span> Este porcentaje representa el peso que cada área tiene en tu plan ideal. Un porcentaje más alto indica un área que requiere tu atención prioritaria.' +
-                                    '</p>' +
-                                '</div>' +
-                            '</div>' +
-
-                            '<hr class="my-8 border-t border-gray-200">' +
-
-                            '<div class="grid grid-cols-1 md:grid-cols-2 gap-8">' +
-                                '<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">' +
-                                    '<h2 class="text-2xl font-bold brand-primary-text mb-4">Análisis de Ahorro</h2>' +
-                                    '<div class="space-y-4">' +
-                                        '<div class="bg-gray-50 p-4 rounded-lg">' +
-                                            '<p class="text-sm text-gray-600">Tu Ahorro Mensual:</p>' +
-                                            '<p class="text-3xl font-bold text-gray-800">$' + actualSavings.toLocaleString('es-MX') + '</p>' +
-                                        '</div>' +
-                                        '<div class="bg-gray-50 p-4 rounded-lg border-2 brand-primary-border border-dashed">' +
-                                            '<p class="text-sm text-gray-600">Ahorro Recomendado (20%):</p>' +
-                                            '<p class="text-3xl font-bold brand-primary-text">$' + Math.round(recommendedSavings).toLocaleString('es-MX') + '</p>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<p class="mt-4 text-sm font-medium ' + savingsColor + '">' + savingsFeedback + '</p>' +
-                                    '<p class="text-xs text-gray-400 mt-2">Fuente: Recomendación basada en directrices de la CONDUSEF.</p>' +
-                                '</div>' +
-                                '<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">' +
-                                    '<h2 class="text-2xl font-bold brand-primary-text mb-4">Temas para tu Asesoría</h2>' +
-                                    '<ul class="text-sm text-gray-700 space-y-3">' + consultationTopics + '</ul>' +
-                                '</div>' +
-                            '</div>' +
-                            
-                            '<hr class="my-8 border-t border-gray-200">' +
-
-                            '<div class="bg-gray-50 p-6 rounded-2xl">' +
-                                '<h2 class="text-2xl font-bold brand-primary-text mb-4 text-center">Riesgos y Costos en tu Zona (CP: ' + (data.postalCode || 'N/A') + ')</h2>' +
-                                '<p class="text-sm text-gray-600 text-center mb-6">Tener un seguro de Gastos Médicos Mayores te protege de costos imprevistos. Estos son algunos costos promedio en tu región:</p>' +
-                                '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">' +
-                                    '<div class="bg-white p-4 rounded-lg border">' +
-                                        '<p class="text-sm text-gray-600">Costo Promedio Consulta Especialista:</p>' +
-                                        '<p class="text-3xl font-bold text-gray-800">$' + regionalData.consulta.toLocaleString('es-MX') + '</p>' +
-                                    '</div>' +
-                                    '<div class="bg-white p-4 rounded-lg border">' +
-                                        '<p class="text-sm text-gray-600">Costo Promedio Noche de Hospital:</p>' +
-                                        '<p class="text-3xl font-bold text-gray-800">$' + regionalData.urgencia.toLocaleString('es-MX') + '</p>' +
-                                    '</div>' +
-                                '</div>' +
-                                (data.hasChildren === 'Sí' ? '<div class="bg-white p-4 rounded-lg mt-4 text-center border"><p class="text-sm text-gray-600">Costo Promedio Universidad Privada:</p><p class="text-3xl font-bold text-gray-800">$' + regionalData.universidad.toLocaleString('es-MX') + '</p></div>' : '') +
-                                '<p class="text-xs text-gray-400 mt-4 text-center">Fuente: Estimación basada en datos de la AMIS e INEGI.</p>' +
-                            '</div>' +
-
-                        '</div>' +
-                        '<div class="mt-8 text-center" id="report-footer">' +
-                            '<button id="download-pdf-btn" class="brand-primary-bg text-white font-bold py-3 px-8 rounded-lg brand-primary-bg-hover transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">Descargar PDF</button>' +
-                            '<button id="send-email-btn" class="ml-4 bg-gray-800 text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-colors shadow-md">Enviar Copia a Asesor</button>' +
-                            '<button id="restart-btn" class="mt-4 sm:mt-0 sm:ml-4 bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 transition-colors">Realizar otro Análisis</button>' +
-                        '</div>';
-
-                    FinancialCheckupApp.elements.analysisSection.innerHTML = reportHtml;
-                    
-                    document.getElementById('restart-btn').addEventListener('click', function() { FinancialCheckupApp.utils.handleRestart(); });
-                    document.getElementById('download-pdf-btn').addEventListener('click', function() { FinancialCheckupApp.pdf.download(); });
-                    document.getElementById('send-email-btn').addEventListener('click', function() { FinancialCheckupApp.backend.sendEmail(); });
-                    
-                    this.renderPrioritiesChart(priorities);
-                },
-                
-                renderPrioritiesChart: function(priorities) {
-                    var ctx = document.getElementById('prioritiesChart');
-                    if (!ctx) return;
-
-                    var labels = priorities.map(function(p) { return p[0]; });
-                    var data = priorities.map(function(p) { return p[1]; });
-
-                    new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Prioridad',
-                                data: data,
-                                backgroundColor: [
-                                    '#114a43', // brand-primary
-                                    '#1a6f64', // brand-primary-light
-                                    '#f59e0b', // brand-secondary
-                                    '#6b7280', // gray-500
-                                    '#d1d5db', // gray-300
-                                    '#fca5a5'  // red-300
-                                ],
-                                borderColor: '#f9fafb', // background color of chart container
-                                borderWidth: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            cutout: '60%',
-                            plugins: {
-                                legend: {
-                                    position: 'right',
-                                    labels: {
-                                        boxWidth: 20,
-                                        padding: 20,
-                                        font: {
-                                            size: 14,
-                                            family: "'Inter', sans-serif"
-                                        }
-                                    }
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return context.label + ': ' + context.raw + '%';
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                },
-
-            },
-
-            // =========================================================================
-            // PDF MODULE
-            // =========================================================================
-            pdf: {
-                download: function() {
-                    var btn = document.getElementById('download-pdf-btn');
-                    var originalText = btn.innerHTML;
-                    btn.disabled = true;
-                    btn.innerHTML = 'Generando...';
-
-                    var reportElement = document.getElementById('report-content');
-                    var footer = document.getElementById('report-footer');
-                    footer.classList.add('hidden'); // Hide buttons for the PDF capture
-
-                    // Wait a bit for chart animation to finish
-                    setTimeout(function() {
-                        html2canvas(reportElement, {
-                            scale: 2,
-                            backgroundColor: '#ffffff',
-                            useCORS: true
-                        }).then(function(canvas) {
-                            var imgData = canvas.toDataURL('image/png');
-                            var jspdf = window.jspdf;
-                            var pdf = new jspdf.jsPDF('p', 'mm', 'a4');
-                            var pdfWidth = pdf.internal.pageSize.getWidth();
-                            var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                            
-                            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                            pdf.save('Reporte_CheckUp_Financiero.pdf');
-
-                            // Restore UI
-                            footer.classList.remove('hidden');
-                            btn.disabled = false;
-                            btn.innerHTML = originalText;
-                        })['catch'](function(err) {
-                            console.error("PDF generation failed:", err);
-                            // Restore UI on error
-                            footer.classList.remove('hidden');
-                            btn.disabled = false;
-                            btn.innerHTML = 'Error. Reintentar';
-                        });
-                    }, 500);
-                }
-            },
-
-            // =========================================================================
-            // BACKEND MODULE
-            // =========================================================================
-            backend: {
-                sendEmail: function() {
-                    var btn = document.getElementById('send-email-btn');
-                    if (btn.disabled) return;
-
-                    btn.disabled = true;
-                    btn.innerHTML = 'Enviando...';
-                    
-                    var payload = {
-                        userAnswers: FinancialCheckupApp.state.userAnswers,
-                        analysisResults: FinancialCheckupApp.state.analysisResults,
-                        questions: FinancialCheckupApp.questions
-                    };
-                    
-                    // DEVMAESTRO CRITICAL CHANGE: The user's Google Apps Script URL has been integrated.
-                    var googleWebAppUrl = 'https://script.google.com/macros/s/AKfycbzcrKcMuUOSUZds3VR2kbvmKdsUuSh3PlMsS26s5AtKYlGh0aY2iOK2Oy6NO35sv_nROw/exec'; 
-
-                    fetch(googleWebAppUrl, {
-                        method: 'POST',
-                        // DEVMAESTRO NOTE: Google Apps Script requires a different way to send data.
-                        // We wrap our JSON in a way it can understand.
-                        body: JSON.stringify(payload),
-                        headers: {
-                          'Content-Type': 'text/plain;charset=utf-8',
-                        },
-                    })
-                    .then(function(response) { return response.json(); })
-                    .then(function(data) {
-                        if (data.status === 'success') {
-                            console.log('Success:', data);
-                            btn.innerHTML = 'Enviado ✓';
-                            btn.classList.remove('bg-gray-800', 'hover:bg-black');
-                            btn.classList.add('bg-green-600');
-                        } else {
-                            throw new Error(data.message || 'Unknown error from Google Apps Script');
-                        }
-                    })
-                    ['catch'](function(error) {
-                        console.error('Error:', error);
-                        btn.innerHTML = 'Error. Reintentar';
-                        btn.disabled = false;
-                    });
-                }
-            },
-
-            // =========================================================================
-            // UTILITIES MODULE
-            // =========================================================================
-            utils: {
-                handleRestart: function() {
-                    // Reset state
-                    FinancialCheckupApp.state.currentQuestionIndex = 0;
-                    FinancialCheckupApp.state.userAnswers = {
-                        childrenData: [],
-                        currentInsurances: []
-                    };
-                    FinancialCheckupApp.state.analysisResults = null;
-
-                    // Reset UI
-                    FinancialCheckupApp.elements.analysisSection.classList.add('hidden');
-                    FinancialCheckupApp.elements.quizSection.classList.remove('hidden');
-                    FinancialCheckupApp.elements.completionScreen.classList.add('hidden');
-                    FinancialCheckupApp.elements.analysisSection.innerHTML = ''; // Clear old report
-
-                    // Re-render the first question
-                    FinancialCheckupApp.quiz.renderCurrentQuestion();
-                }
+    // Dinámica 100%
+    const inputs100 = document.querySelectorAll('.pct-input');
+    const lblSuma = document.getElementById('lbl-suma');
+    const bar100 = document.getElementById('bar-100');
+    inputs100.forEach(input => {
+        input.addEventListener('input', () => {
+            let total = 0;
+            inputs100.forEach(i => total += Number(i.value) || 0);
+            lblSuma.innerText = total + '%';
+            if (total === 100) {
+                bar100.style.backgroundColor = 'var(--completed-green)'; 
+            } else {
+                bar100.style.backgroundColor = 'var(--primary-dark)'; 
             }
-
-        };
-
-        // --- KICK-OFF THE APPLICATION ---
-        FinancialCheckupApp.init();
-
+        });
     });
-    </script>
+
+    // Lógica Seguros Ninguno
+    function seleccionarNinguno() {
+        const isChecked = document.getElementById('chk_ninguno').checked;
+        if(isChecked) {
+            ['seg_auto','seg_hogar','seg_gmm','seg_mascota','seg_edu','seg_retiro','seg_inv','seg_vida','seg_empresa','chk_imss'].forEach(id => {
+                document.getElementById(id).checked = false;
+            });
+        }
+    }
+
+    function startTest() {
+        document.getElementById('intro').classList.add('hidden');
+        document.getElementById('form-header').classList.remove('hidden');
+        goToStep(1);
+    }
+
+    function drawDots(sectionId, currentStep) {
+        const sec = sectionsData[sectionId];
+        const container = document.getElementById('dots-container');
+        let html = '';
+        for (let i = 0; i < sec.steps.length; i++) {
+            let stepNum = sec.steps[i];
+            let status = (stepNum < currentStep) ? 'completed' : (stepNum === currentStep ? 'current' : 'pending');
+            html += `<div class="dot-container ${status}"><div class="dot ${status}"></div><div class="dot-line"></div></div>`;
+        }
+        container.innerHTML = html;
+        document.getElementById('lbl-seccion').innerText = `ETAPA ${sectionId} DE 11`;
+        document.getElementById('lbl-titulo').innerText = sec.title;
+    }
+
+    function goToStep(step) {
+        if(step === 0) {
+            document.getElementById('form-header').classList.add('hidden');
+            document.getElementById('intro').classList.remove('hidden');
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            return;
+        }
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById('step-' + step);
+        target.classList.add('active');
+        bar100.style.display = (step === 19) ? 'block' : 'none';
+        const section = target.getAttribute('data-section') || 1;
+        drawDots(section, step);
+        window.scrollTo(0,0);
+    }
+    
+    function nextQuestion(n) { goToStep(n); }
+    function evalStep7() { nextQuestion( (estadoCivilGlobal === 'Casado' || estadoCivilGlobal === 'Unión libre') ? 8 : 10 ); }
+    function backFromStep10() { nextQuestion( (estadoCivilGlobal === 'Casado' || estadoCivilGlobal === 'Unión libre') ? 9 : 7 ); }
+    function evalStep10() { nextQuestion( (tieneHijosGlobal === 'Sí') ? 11 : 12 ); }
+    function backFromStep12() { nextQuestion( (tieneHijosGlobal === 'Sí') ? 11 : 10 ); }
+
+    function validar100(next) {
+        let total = 0;
+        document.querySelectorAll('.pct-input').forEach(i => total += Number(i.value) || 0);
+        if(total !== 100) alert('Las respuestas en esta sección deben sumar exactamente el 100%. Por favor ajusta tus porcentajes.');
+        else nextQuestion(next);
+    }
+
+    function updateCircle(id, percentage) {
+        document.getElementById('txt_' + id).innerText = percentage + '%';
+        document.getElementById(id).style.background = `conic-gradient(var(--primary-main) ${percentage}%, #F3F4F6 0%)`;
+    }
+
+    // ================== LOGICA FINAL ==================
+    function finalizar() {
+        document.getElementById('form-header').classList.add('hidden');
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-final').classList.add('active');
+        window.scrollTo(0,0);
+
+        // Datos Personales
+        let genero = document.querySelector('input[name="genero"]:checked')?.value || "Cliente";
+        let nac = document.getElementById('q_fecha_nac').value;
+        let edad = nac ? (new Date().getFullYear() - new Date(nac).getFullYear()) : 30;
+        document.getElementById('perfil_text').innerText = `${genero.toUpperCase()} | ${edad} AÑOS | MÉXICO`;
+
+        // Datos Financieros (Barras)
+        let g = Number(document.getElementById('pct_gastos').value) || 0;
+        let d = Number(document.getElementById('pct_deudas').value) || 0;
+        let a = Number(document.getElementById('pct_ahorro').value) || 0;
+        let e = Number(document.getElementById('pct_esparcimiento').value) || 0;
+        let t_ahorro = Number(document.getElementById('q_tiempo_ahorro').value) || 0;
+
+        document.getElementById('lbl_bar_gastos').innerHTML = `<span>Gastos Fijos</span> <span>${g}%</span>`;
+        document.getElementById('bar_gastos').style.width = g + '%';
+        
+        document.getElementById('lbl_bar_ahorro').innerHTML = `<span>Ahorro / Inversión</span> <span>${a}%</span>`;
+        document.getElementById('bar_ahorro').style.width = a + '%';
+
+        document.getElementById('lbl_bar_tiempo').innerHTML = `<span>Consistencia de Ahorro</span> <span>${t_ahorro} años</span>`;
+
+        document.getElementById('lbl_bar_esparcimiento').innerHTML = `<span>Estilo de Vida</span> <span>${e}%</span>`;
+        document.getElementById('bar_esparcimiento').style.width = e + '%';
+
+        // Velocímetro (Salud Financiera)
+        let status = "ESTABLE";
+        let deg = 0; // centro
+        if(g > 60 || d > 30 || a < 5) { 
+            status = "VULNERABLE"; 
+            deg = -70; 
+            document.getElementById('badge_status').style.color = "white";
+            document.getElementById('badge_status').style.background = "var(--danger-red)";
+        }
+        else if (a > 15 && d < 15) { 
+            status = "ÓPTIMO"; 
+            deg = 70; 
+            document.getElementById('badge_status').style.color = "white";
+            document.getElementById('badge_status').style.background = "var(--completed-green)";
+        } else {
+            document.getElementById('badge_status').style.color = "white";
+            document.getElementById('badge_status').style.background = "var(--primary-main)";
+        }
+        
+        document.getElementById('badge_status').innerText = status;
+        // Animación suave del velocímetro
+        setTimeout(() => {
+            document.getElementById('needle').style.transform = `translateX(-50%) rotate(${deg}deg)`;
+        }, 500);
+
+        // GMM Circulo
+        let tieneGMM = document.getElementById('seg_gmm').checked;
+        if(tieneGMM) {
+            updateCircle('circ_gmm', 8);
+            document.getElementById('desc_gmm').innerHTML = "Cuentas con un seguro de <b>Gastos Médicos Mayores</b>. Formas parte del exclusivo 8% de la población asegurada privadamente.";
+        } else {
+            updateCircle('circ_gmm', 0);
+            document.getElementById('desc_gmm').innerHTML = "No detectamos cobertura médica privada. Perteneces al 92% de la población vulnerable a una descapitalización por emergencias de salud.";
+        }
+
+        // Ahorro Circulo
+        updateCircle('circ_ahorro', a > 0 ? 54 : 10);
+        document.getElementById('desc_ahorro').innerHTML = a >= 10 ? `Tu capacidad de ahorro del <b>${a}%</b> te posiciona por encima del promedio nacional.` : `Tu nivel de ahorro es inferior al promedio del 54% de personas en tu estrato socioeconómico.`;
+
+        // Lista de Seguros Contratados
+        let htmlSeguros = "";
+        let seguros = [
+            {id:'seg_auto', name:'Seguro de Auto', sum:'pol_auto'},
+            {id:'seg_hogar', name:'Protección Hogar', sum:'pol_hogar'},
+            {id:'seg_gmm', name:'Gastos Médicos (GMM)', sum:'pol_gmm'},
+            {id:'seg_mascota', name:'Cobertura Mascotas', sum:'pol_mascota'},
+            {id:'seg_edu', name:'Fondo Educativo', sum:'pol_edu'},
+            {id:'seg_retiro', name:'Plan de Retiro (PPR)', sum:'pol_retiro'},
+            {id:'seg_inv', name:'Fondo de Inversión', sum:'pol_inv'},
+            {id:'seg_vida', name:'Seguro de Vida', sum:'pol_vida'},
+            {id:'seg_empresa', name:'Seguro Empresarial', sum:'pol_empresa'}
+        ];
+
+        let contador = 0;
+        seguros.forEach(s => {
+            if(document.getElementById(s.id).checked) {
+                let pol = document.getElementById(s.sum).value || '1';
+                htmlSeguros += `<div class="insurance-summary"><b>${s.name}</b> <span>${pol} Póliza(s)</span></div>`;
+                contador++;
+            }
+        });
+        if(document.getElementById('chk_imss').checked) {
+            htmlSeguros += `<div class="insurance-summary"><b>IMSS / ISSSTE</b> <span style="background:var(--bg-page); color:var(--text-main);">Derechohabiente</span></div>`;
+            contador++;
+        }
+        if(contador === 0) {
+            htmlSeguros = `<div style="color:var(--danger-red); font-weight:600; padding: 15px; border: 1px solid #FECACA; background: #FEF2F2; border-radius: 8px;">No se detectaron instrumentos de protección. Patrimonio en riesgo.</div>`;
+        }
+        document.getElementById('res_seguros_lista').innerHTML = htmlSeguros;
+
+        // Recomendaciones Inteligentes Noctua Capital
+        let rec = "";
+        let objRetiro = document.getElementById('q_edad_retiro').value || 65;
+        
+        if(!document.getElementById('seg_retiro').checked) {
+            rec += `<li><b>Estrategia de Retiro:</b> Tienes como meta retirarte a los ${objRetiro} años. Te recomendamos redirigir un porcentaje de tu capital de esparcimiento (${e}%) hacia un Plan Personal de Retiro con beneficios fiscales inmediatos.</li>`;
+        }
+        
+        if(!document.getElementById('seg_vida').checked && (tieneHijosGlobal === 'Sí' || estadoCivilGlobal === 'Casado')) {
+            rec += `<li><b>Blindaje Patrimonial:</b> Tus dependientes están expuestos financieramente. La estructura de un Seguro de Vida institucional garantizará la continuidad de su estilo de vida y educación.</li>`;
+        }
+
+        if(document.getElementById('opts_auto').querySelector('input[value="Sí"]')?.checked && !document.getElementById('seg_auto').checked) {
+            rec += `<li><b>Transferencia de Riesgos (Auto):</b> Tu vehículo no cuenta con protección. Un siniestro representa una fuga de capital innecesaria que puede prevenirse con coberturas amplias.</li>`;
+        }
+
+        if(rec === "") {
+            rec = `<li><b>Mantenimiento de Portafolio:</b> Tu estructura financiera es sólida. El paso sugerido por Noctua Capital es una revisión de sumas aseguradas vs. inflación (UDIS/Dólares) para evitar depreciación de coberturas.</li>`;
+        }
+        document.getElementById('lista_recomendaciones').innerHTML = rec;
+    }
+</script>
+
 </body>
 </html>
 
